@@ -142,6 +142,11 @@
 
 			if (cbGroup) {
 				params = (params) ? JSON.parse(params) : undefined;
+				responseType = parseInt(responseType, 10);
+
+				if (responseType !== RESPONSE_COMPLETE) {
+					responseType = RESPONSE_ERROR;
+				}
 
 				switch (responseType) {
 				case RESPONSE_COMPLETE:
