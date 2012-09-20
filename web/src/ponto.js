@@ -26,7 +26,7 @@
 			 *
 			 * @type {Number}
 			 *
-			 * @see  Ponto.ping
+			 * @see  Ponto.acceptResponse
 			 */
 			RESPONSE_COMPLETE = 0,
 
@@ -37,7 +37,7 @@
 			 *
 			 * @type {Number}
 			 *
-			 * @see  Ponto.ping
+			 * @see  Ponto.acceptResponse
 			 */
 			RESPONSE_ERROR = 1,
 
@@ -126,7 +126,7 @@
 		}
 
 		/**
-		 * Function called by the native layer when responding to a Request
+		 * Function called by the native layer when answering a request
 		 *
 		 * @public
 		 *
@@ -136,7 +136,7 @@
 		 * @param {String} params A JSON-encoded string representing
 		 * an hash with the parameters for the callback
 		 */
-		function ping(callbackId, responseType, params) {
+		function acceptResponse(callbackId, responseType, params) {
 			var cbGroup = callbacks[callbackId],
 				callback;
 
@@ -163,7 +163,7 @@
 		return {
 			Request: Request,
 			sendRequest: sendRequest,
-			ping: ping
+			acceptResponse: acceptResponse
 		};
 	}
 
