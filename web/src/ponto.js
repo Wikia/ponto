@@ -18,6 +18,38 @@
 	 * @return {Object} The module reference
 	 */
 	function ponto() {
+		var
+			/**
+			 * [Constant] Represents a completed request
+			 *
+			 * @private
+			 *
+			 * @type {Number}
+			 *
+			 * @see  Ponto.ping
+			 */
+			RESPONSE_COMPLETE = 0,
+
+			/**
+			 * [Constant] Represents a failed request with errors
+			 *
+			 * @private
+			 *
+			 * @type {Number}
+			 *
+			 * @see  Ponto.ping
+			 */
+			RESPONSE_ERROR = 1,
+
+			/**
+			 * Registry for complete/error callbacks
+			 *
+			 * @private
+			 *
+			 * @type {Object}
+			 */
+			callbacks = {};
+
 		/**
 		 * Request constructor
 		 *
@@ -31,7 +63,7 @@
 		function Request(target, method, params) {
 			this.target = target;
 			this.method = method;
-			this.params = JSON.stringify(params);
+			this.params = (params) ? JSON.stringify(params) : undefined;
 			this.completeCallback = null;
 			this.errorCallback = null;
 		}
@@ -43,26 +75,35 @@
 		 * @param {Function} errorCallback [Optional] A function to call in case of error
 		 */
 		Request.prototype.run = function (completeCallback, errorCallback) {
-			if (completeCallback) {
+			var registerCallbacks = false,
+				callbackId = null;
+
+			if (completeCallback instanceof Function) {
+				registerCallbacks = true;
 				this.completeCallback = completeCallback;
 			}
 
-			if (errorCallback) {
+			if (errorCallback instanceof Function) {
+				registerCallbacks = true;
 				this.errorCallback = errorCallback;
+			}
+
+			if (registerCallbacks) {
+				callbackId = 'cbid_' + Math.random().toString().substr(2);
+				callbacks[callbackId] = {complete: completeCallback, error: errorCallback};
 			}
 
 			//Platforms that can expose native mehtods in the
 			//WebView context will provide this method (e.g. Android)
 			if (context.PontoNativeTransfer) {
-				context.PontoNativeTransfer(this.target, this.method, this.params);
+				context.PontoNativeTransfer(this.target, this.method, this.params, callbackId);
 			} else {
 				//the only other chance is for the native layer to register
 				//a custom protocol for communicating with the webview (e.g. iOS)
-				context.location.href = encodeURI(
-					'ponto:///target:' + this.target +
-						'/method:' + this.method +
-						'/params:' + this.params
-				);
+				context.location.href = 'ponto:///request?target=' + encodeURIComponent(this.target) +
+					'&method=' + encodeURIComponent(this.method) +
+					((this.params) ? '&params=' + encodeURIComponent(this.params) : '') +
+					((registerCallbacks) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 			}
 		};
 
@@ -84,9 +125,45 @@
 			(new Request(target, method, params)).run(completeCallback, errorCallback);
 		}
 
+		/**
+		 * Function called by the native layer when responding to a Request
+		 *
+		 * @public
+		 *
+		 * @param {String} callbackId The id stored in the callbacks registry by Request.run
+		 * @param {Number} responseType The type of response,
+		 * one of Ponto.RESPONSE_COMPLETE or Ponto.RESPONSE_ERROR
+		 * @param {String} params A JSON-encoded string representing
+		 * an hash with the parameters for the callback
+		 */
+		function ping(callbackId, responseType, params) {
+			var cbGroup = callbacks[callbackId],
+				callback;
+
+			if (cbGroup) {
+				params = (params) ? JSON.parse(params) : undefined;
+
+				switch (responseType) {
+				case RESPONSE_COMPLETE:
+					callback = cbGroup.complete;
+					break;
+				case RESPONSE_ERROR:
+					callback = cbGroup.error;
+					break;
+				}
+
+				if (callback) {
+					callback(params);
+				}
+
+				delete callbacks[callbackId];
+			}
+		}
+
 		return {
 			Request: Request,
-			sendRequest: sendRequest
+			sendRequest: sendRequest,
+			ping: ping
 		};
 	}
 
