@@ -74,7 +74,7 @@
 		 * @param {Function} completeCallback [Optional] A function to call on completion
 		 * @param {Function} errorCallback [Optional] A function to call in case of error
 		 */
-		Request.prototype.run = function (completeCallback, errorCallback) {
+		Request.prototype.send = function (completeCallback, errorCallback) {
 			var registerCallbacks = false,
 				callbackId = null;
 
@@ -122,7 +122,7 @@
 		 * @see Request
 		 */
 		function sendRequest(target, method, params, completeCallback, errorCallback) {
-			(new Request(target, method, params)).run(completeCallback, errorCallback);
+			(new Request(target, method, params)).send(completeCallback, errorCallback);
 		}
 
 		/**
@@ -130,7 +130,7 @@
 		 *
 		 * @public
 		 *
-		 * @param {String} callbackId The id stored in the callbacks registry by Request.run
+		 * @param {String} callbackId The id stored in the callbacks registry by Request.send
 		 * @param {Number} responseType The type of response,
 		 * one of Ponto.RESPONSE_COMPLETE or Ponto.RESPONSE_ERROR
 		 * @param {String} params A JSON-encoded string representing
