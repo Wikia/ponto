@@ -1,0 +1,21 @@
+# Java #
+*.class
+*.war
+*.ear
+
+# Objective-C #
+*.o
+ios/cuserdata
+ios/project.xcworkspace
+
+# Android #
+android/bin
+android/gen
+
+# Mac #
+.DS_Store
+
+# IntelliJ Idea/AppCode #
+.idea
+ios/.idea
+android/.idea
