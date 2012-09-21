@@ -5,8 +5,8 @@
 
 # Objective-C #
 *.o
-ios/xcuserdata
-ios/project.xcworkspace
+ios/Ponto/Ponto.xcodeproj/xcuserdata
+ios/Ponto/Ponto.xcodeproj/project.xcworkspace
 
 # Android #
 android/bin
