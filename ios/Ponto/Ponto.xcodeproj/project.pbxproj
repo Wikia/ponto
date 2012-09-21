@@ -1,0 +1,490 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3BC46FFA160CBA6500EF9B85 /* PontoDEMOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC46FF8160CBA6500EF9B85 /* PontoDEMOViewController.m */; };
+		3BC46FFB160CBA6500EF9B85 /* PontoDEMOViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BC46FF9160CBA6500EF9B85 /* PontoDEMOViewController.xib */; };
+		3BC47007160CC06100EF9B85 /* web in Resources */ = {isa = PBXBuildFile; fileRef = 3BC47006160CC06100EF9B85 /* web */; };
+		6BE461294C1F54F199A633DA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */; };
+		6BE461F0B974327ECDD6040F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE4608CBF63C610AEFBF725 /* Default-568h@2x.png */; };
+		6BE4633715CFDB994597632F /* PontoDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */; };
+		6BE464DA2CBF20F3F0E9598E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BE468FFE1FC6C4B414CFBA3 /* InfoPlist.strings */; };
+		6BE46608C30B793E207CDF3B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46A58BA5C67AAED1D0F33 /* CoreGraphics.framework */; };
+		6BE4664446C59E3D405FFFBC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6BE4626D12713D1B043B7930 /* InfoPlist.strings */; };
+		6BE46654BA09F57036442FA8 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE460D353518C4EC62D2E4C /* Default@2x.png */; };
+		6BE46770D0B669331645BE6D /* PontoBaseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE468667F12B9175F833049 /* PontoBaseHandler.m */; };
+		6BE4680C8461991F91F564A0 /* PontoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46871E65DE45310604262 /* PontoTests.m */; };
+		6BE4694713121642936BA592 /* PontoDEMOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE466DE016372E65DE56D12 /* PontoDEMOAppDelegate.m */; };
+		6BE469771F6E5E733EFD97FB /* PontoBaseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE468667F12B9175F833049 /* PontoBaseHandler.m */; };
+		6BE46AC9EF9D7888079E6617 /* PontoDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */; };
+		6BE46B62708A8778C71D3830 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE46FF755701CAC34D9AEA4 /* Default.png */; };
+		6BE46CA78BBAB3BDAA5BDBA6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */; };
+		6BE46DB35E3F636F5AEB453E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */; };
+		6BE46E04F9E591168928261B /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46BFCA9580E6458FB9EBC /* SenTestingKit.framework */; };
+		6BE46E47364F3AF0B6B98CBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */; };
+		6BE46FF6F731FA3C4F92ECD6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46980D08505F14FBC3A1C /* main.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6BE460A8857D015E1D7790DC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6BE46A497320EB524FF754F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6BE464C358EA765758A9E7B0;
+			remoteInfo = Ponto;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3BC46FF7160CBA6500EF9B85 /* PontoDEMOViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PontoDEMOViewController.h; sourceTree = "<group>"; };
+		3BC46FF8160CBA6500EF9B85 /* PontoDEMOViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PontoDEMOViewController.m; sourceTree = "<group>"; };
+		3BC46FF9160CBA6500EF9B85 /* PontoDEMOViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PontoDEMOViewController.xib; sourceTree = "<group>"; };
+		3BC47006160CC06100EF9B85 /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; name = web; path = ../../../../web; sourceTree = "<group>"; };
+		6BE46023DFB838841553CE7A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6BE4606A0AA3374F68EBF395 /* pontoDemo.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = pontoDemo.html; sourceTree = "<group>"; };
+		6BE4608CBF63C610AEFBF725 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		6BE460D353518C4EC62D2E4C /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		6BE461E1C0407B544A531D1C /* Ponto-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = "Ponto-Info.plist"; sourceTree = "<group>"; };
+		6BE46200F35DE4829ED3A34A /* PontoBaseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PontoBaseHandler.h; sourceTree = "<group>"; };
+		6BE4649481F8EA1C75B45022 /* PontoDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PontoDispatcher.h; sourceTree = "<group>"; };
+		6BE464F0B61C72391C38E09B /* PontoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = "PontoTests-Info.plist"; sourceTree = "<group>"; };
+		6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PontoDispatcher.m; sourceTree = "<group>"; };
+		6BE466DE016372E65DE56D12 /* PontoDEMOAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PontoDEMOAppDelegate.m; sourceTree = "<group>"; };
+		6BE467959C4560E6957E5E5C /* Ponto-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Ponto-Prefix.pch"; sourceTree = "<group>"; };
+		6BE468667F12B9175F833049 /* PontoBaseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PontoBaseHandler.m; sourceTree = "<group>"; };
+		6BE46871E65DE45310604262 /* PontoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PontoTests.m; sourceTree = "<group>"; };
+		6BE468BAA200487C0A00CFAF /* PontoTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PontoTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BE46980D08505F14FBC3A1C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6BE46A58BA5C67AAED1D0F33 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6BE46AF5FD42A3BAB1104831 /* PontoDEMOAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PontoDEMOAppDelegate.h; sourceTree = "<group>"; };
+		6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6BE46BFCA9580E6458FB9EBC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		6BE46C83278BC1BD5DB3F965 /* Ponto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ponto.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6BE46DCE10FAB9400863FEC0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6BE46E3DFE2F6474C174E7DF /* PontoTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PontoTests.h; sourceTree = "<group>"; };
+		6BE46FF755701CAC34D9AEA4 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6BE467D662B856CE9AFD3E9F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE46E04F9E591168928261B /* SenTestingKit.framework in Frameworks */,
+				6BE46CA78BBAB3BDAA5BDBA6 /* UIKit.framework in Frameworks */,
+				6BE46DB35E3F636F5AEB453E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6BE46A08A524EB5E2A11646D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE461294C1F54F199A633DA /* UIKit.framework in Frameworks */,
+				6BE46E47364F3AF0B6B98CBC /* Foundation.framework in Frameworks */,
+				6BE46608C30B793E207CDF3B /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6BE46093C45C33F82D79AB7B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6BE4608CBF63C610AEFBF725 /* Default-568h@2x.png */,
+				6BE460D353518C4EC62D2E4C /* Default@2x.png */,
+				6BE46FF755701CAC34D9AEA4 /* Default.png */,
+				6BE467959C4560E6957E5E5C /* Ponto-Prefix.pch */,
+				6BE46980D08505F14FBC3A1C /* main.m */,
+				6BE468FFE1FC6C4B414CFBA3 /* InfoPlist.strings */,
+				6BE461E1C0407B544A531D1C /* Ponto-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6BE46106C37C5301797532A2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6BE4626D12713D1B043B7930 /* InfoPlist.strings */,
+				6BE464F0B61C72391C38E09B /* PontoTests-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6BE4615A5136AF62C9FEA1E4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6BE46C83278BC1BD5DB3F965 /* Ponto.app */,
+				6BE468BAA200487C0A00CFAF /* PontoTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6BE462237E242E7B0288C80A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6BE46BFCA9580E6458FB9EBC /* SenTestingKit.framework */,
+				6BE46A58BA5C67AAED1D0F33 /* CoreGraphics.framework */,
+				6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */,
+				6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6BE464657B1F0E1D4C950DA3 /* PontoDemo */ = {
+			isa = PBXGroup;
+			children = (
+				6BE466DE016372E65DE56D12 /* PontoDEMOAppDelegate.m */,
+				6BE46AF5FD42A3BAB1104831 /* PontoDEMOAppDelegate.h */,
+				6BE46093C45C33F82D79AB7B /* Supporting Files */,
+				3BC46FF7160CBA6500EF9B85 /* PontoDEMOViewController.h */,
+				3BC46FF8160CBA6500EF9B85 /* PontoDEMOViewController.m */,
+				3BC46FF9160CBA6500EF9B85 /* PontoDEMOViewController.xib */,
+				6BE464B6FEFDF2F84A9CAC33 /* html */,
+			);
+			name = PontoDemo;
+			path = Ponto;
+			sourceTree = "<group>";
+		};
+		6BE464B6FEFDF2F84A9CAC33 /* html */ = {
+			isa = PBXGroup;
+			children = (
+				3BC47006160CC06100EF9B85 /* web */,
+				6BE4606A0AA3374F68EBF395 /* pontoDemo.html */,
+			);
+			path = html;
+			sourceTree = "<group>";
+		};
+		6BE467EE7E0D429D5295DBBD /* PontoTests */ = {
+			isa = PBXGroup;
+			children = (
+				6BE46871E65DE45310604262 /* PontoTests.m */,
+				6BE46E3DFE2F6474C174E7DF /* PontoTests.h */,
+				6BE46106C37C5301797532A2 /* Supporting Files */,
+			);
+			path = PontoTests;
+			sourceTree = "<group>";
+		};
+		6BE46DB786E89936EC7536CC = {
+			isa = PBXGroup;
+			children = (
+				6BE46FD2B3707FDC2C73F0A8 /* PontoLib */,
+				6BE4615A5136AF62C9FEA1E4 /* Products */,
+				6BE462237E242E7B0288C80A /* Frameworks */,
+				6BE464657B1F0E1D4C950DA3 /* PontoDemo */,
+				6BE467EE7E0D429D5295DBBD /* PontoTests */,
+			);
+			sourceTree = "<group>";
+		};
+		6BE46FD2B3707FDC2C73F0A8 /* PontoLib */ = {
+			isa = PBXGroup;
+			children = (
+				6BE4649481F8EA1C75B45022 /* PontoDispatcher.h */,
+				6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */,
+				6BE46200F35DE4829ED3A34A /* PontoBaseHandler.h */,
+				6BE468667F12B9175F833049 /* PontoBaseHandler.m */,
+			);
+			path = PontoLib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6BE464C358EA765758A9E7B0 /* Ponto */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6BE46C7F6CD63DB72DF602A0 /* Build configuration list for PBXNativeTarget "Ponto" */;
+			buildPhases = (
+				6BE4669A412E522A6331438A /* Sources */,
+				6BE46A08A524EB5E2A11646D /* Frameworks */,
+				6BE46A83D273E5780F0C23A2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ponto;
+			productName = Ponto;
+			productReference = 6BE46C83278BC1BD5DB3F965 /* Ponto.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6BE46AD65F8439FDCF85DF8D /* PontoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6BE469E014AC7072DBF0A02B /* Build configuration list for PBXNativeTarget "PontoTests" */;
+			buildPhases = (
+				6BE46A07545D177645F7FD11 /* Sources */,
+				6BE467D662B856CE9AFD3E9F /* Frameworks */,
+				6BE465FF61B7AA0433EC8630 /* Resources */,
+				6BE464B4AA6065CCCA878F54 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6BE46D150F0D194A1EFC7220 /* PBXTargetDependency */,
+			);
+			name = PontoTests;
+			productName = PontoTests;
+			productReference = 6BE468BAA200487C0A00CFAF /* PontoTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6BE46A497320EB524FF754F6 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 6BE46E9490E9050BBD4C5957 /* Build configuration list for PBXProject "Ponto" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6BE46DB786E89936EC7536CC;
+			productRefGroup = 6BE4615A5136AF62C9FEA1E4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6BE464C358EA765758A9E7B0 /* Ponto */,
+				6BE46AD65F8439FDCF85DF8D /* PontoTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6BE465FF61B7AA0433EC8630 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE4664446C59E3D405FFFBC /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6BE46A83D273E5780F0C23A2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE464DA2CBF20F3F0E9598E /* InfoPlist.strings in Resources */,
+				6BE46B62708A8778C71D3830 /* Default.png in Resources */,
+				6BE46654BA09F57036442FA8 /* Default@2x.png in Resources */,
+				6BE461F0B974327ECDD6040F /* Default-568h@2x.png in Resources */,
+				3BC46FFB160CBA6500EF9B85 /* PontoDEMOViewController.xib in Resources */,
+				3BC47007160CC06100EF9B85 /* web in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6BE464B4AA6065CCCA878F54 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6BE4669A412E522A6331438A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE46FF6F731FA3C4F92ECD6 /* main.m in Sources */,
+				6BE4694713121642936BA592 /* PontoDEMOAppDelegate.m in Sources */,
+				6BE46770D0B669331645BE6D /* PontoBaseHandler.m in Sources */,
+				6BE4633715CFDB994597632F /* PontoDispatcher.m in Sources */,
+				3BC46FFA160CBA6500EF9B85 /* PontoDEMOViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6BE46A07545D177645F7FD11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE4680C8461991F91F564A0 /* PontoTests.m in Sources */,
+				6BE469771F6E5E733EFD97FB /* PontoBaseHandler.m in Sources */,
+				6BE46AC9EF9D7888079E6617 /* PontoDispatcher.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6BE46D150F0D194A1EFC7220 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6BE464C358EA765758A9E7B0 /* Ponto */;
+			targetProxy = 6BE460A8857D015E1D7790DC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		6BE4626D12713D1B043B7930 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6BE46DCE10FAB9400863FEC0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6BE468FFE1FC6C4B414CFBA3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6BE46023DFB838841553CE7A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6BE4602FD3CBC36D21407879 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6BE4662CE8D09723CA77F7AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Ponto/Ponto-Prefix.pch";
+				INFOPLIST_FILE = "Ponto/Ponto-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		6BE46955C5333F5219350062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Ponto/Ponto-Prefix.pch";
+				INFOPLIST_FILE = "Ponto/Ponto-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		6BE46D26B622DD9B0304AF98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Ponto.app/Ponto";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Ponto/Ponto-Prefix.pch";
+				INFOPLIST_FILE = "PontoTests/PontoTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		6BE46DC04988953E2191D21B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		6BE46FEA661137ACEC527B32 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Ponto.app/Ponto";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Ponto/Ponto-Prefix.pch";
+				INFOPLIST_FILE = "PontoTests/PontoTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6BE469E014AC7072DBF0A02B /* Build configuration list for PBXNativeTarget "PontoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6BE46D26B622DD9B0304AF98 /* Release */,
+				6BE46FEA661137ACEC527B32 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6BE46C7F6CD63DB72DF602A0 /* Build configuration list for PBXNativeTarget "Ponto" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6BE46955C5333F5219350062 /* Release */,
+				6BE4662CE8D09723CA77F7AD /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6BE46E9490E9050BBD4C5957 /* Build configuration list for PBXProject "Ponto" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6BE4602FD3CBC36D21407879 /* Release */,
+				6BE46DC04988953E2191D21B /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6BE46A497320EB524FF754F6 /* Project object */;
+}
