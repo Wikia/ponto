@@ -76,7 +76,8 @@
 		 */
 		Request.prototype.send = function (completeCallback, errorCallback) {
 			var registerCallbacks = false,
-				callbackId = null;
+				callbackId = null,
+				nativeHelper = context.PontoNative;
 
 			if (completeCallback instanceof Function) {
 				registerCallbacks = true;
@@ -95,8 +96,8 @@
 
 			//Platforms that can expose native mehtods in the
 			//WebView context will provide this method (e.g. Android)
-			if (context.PontoNativeTransfer) {
-				context.PontoNativeTransfer(this.target, this.method, this.params, callbackId);
+			if (nativeHelper && nativeHelper.dispatch) {
+				nativeHelper.dispatch(this.target, this.method, this.params, callbackId);
 			} else {
 				//the only other chance is for the native layer to register
 				//a custom protocol for communicating with the webview (e.g. iOS)
