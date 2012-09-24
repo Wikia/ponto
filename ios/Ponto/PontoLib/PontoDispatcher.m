@@ -167,8 +167,7 @@
 
                 if (paramsObject) {
                     @try {
-                        id ret = [handlerObject performSelector:methodSelector withObject:paramsObject];
-                        NSLog(@"%@", ret);
+                        [handlerObject performSelector:methodSelector withObject:paramsObject];
                     }
                     @catch (NSException *ex) {
                         NSLog(@"ex: %@", ex);
