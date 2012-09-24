@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>pontoDemo</title>
+
+    <script src="http://localhost:8080/target/target-script-min.js"></script>
+
+    <!-- First load Ponto -->
+    <script src="web/src/ponto.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        function sendMessage() {
+            Ponto.sendRequest(
+                    "Messaging",
+                    "sendMessage",
+                    {subject: "Hey! Ponto is great!", to: "example@email.domain", body: "Hey! I'm using PONTO to handle native requests from webview!"},
+                    function () {
+                        console.log('success');
+                    },
+                    function () {
+                        console.log('error');
+                    });
+        }
+
+
+    function domLoaded() {
+        console.log('LOADED!');
+
+        var button1, button2;
+
+        button1 = document.getElementById("call1");
+        button2 = document.getElementById("call2");
+
+        button1.onclick = function() {
+            console.log('b1');
+
+            console.log(window.Ponto);
+        }
+
+        button2.onclick = function() {
+            console.log('Try to send request via Ponto');
+            console.log(window.location);
+
+            Ponto.sendRequest(
+                    "SomeTestClass",
+                    "someTestMethod",
+                    {a:1,b:2},
+                    function(){
+                        console.log('SomeTestClass::someTestMethod SUCCESS!!');
+                    },
+                    function() {
+                        console.log('SomeTestClass::someTestMethod ERROR!!');
+                    });
+
+            console.log(window.location);
+            window.location = "ponto:///XXXX";
+            console.log(window.location);
+        }
+    }
+
+    function testPonto() {
+        console.log("testPonto");
+        Ponto.sendRequest(
+                "SomeTestClass",
+                "someTestMethod",
+                {a:1, b:2},
+                undefined,
+                undefined);
+
+        console.log("testPonto END");
+    }
+
+    </script>
+</head>
+<body onload="domLoaded()">
+    <h1>Ponto DEMO</h1>
+    <ul>
+        <li>
+            <button onclick="sendMessage()">Send test message</button>
+        </li>
+
+        <li>
+            <button id="call2">Test 2</button>
+        </li>
+        <li>
+            <button id="call3" onclick="testPonto()">Test Ponto</button>
+        </li>
+    </ul>
+</body>
+</html>

@@ -1,8 +1,8 @@
 //
 //  PontoDispatcher
-//  Game Guides
+//  Ponto
 //
-//  Created by Grzegorz Nowicki on 21.09.2012.
+//  Created by Grzegorz Nowicki <grzegorz@wikia-inc.com> on 21.09.2012.
 //  Copyright (c) 2012 Wikia Sp. z o.o. All rights reserved.
 //
 
@@ -60,6 +60,8 @@
 #pragma mark - UIWebViewDelegate
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    NSLog(@"try reload webView with request: %@", request);
+
     NSURL *url = [request URL];
 
     if ([[url scheme] isEqualToString:kPontoUrlScheme]) {
@@ -106,7 +108,7 @@
 }
 
 - (SEL)methodSelectorFromString:(NSString *)methodName withParams:(BOOL)withParams {
-    if (withParams) {
+    if (withParams == YES) {
         return NSSelectorFromString([NSString stringWithFormat:@"%@:", methodName]);
     }
 
@@ -138,33 +140,55 @@
 }
 
 - (void)dispatch:(NSDictionary *)requestParams {
+    NSLog(@"dispatch with params: %@", requestParams);
+
     if (requestParams && [requestParams objectForKey:kPontoTargetParamName] && [requestParams objectForKey:kPontoMethodParamName]) {
         Class targetClassName = [self classNameFromString:[requestParams objectForKey:kPontoTargetParamName]];
-        id paramsObject = [self paramsObjectFromString:[requestParams objectForKey:kPontoParamsParamName]];
-        SEL methodSelector = [self methodSelectorFromString:[requestParams objectForKey:kPontoMethodParamName] withParams:(paramsObject==nil)?YES:NO];
+        id paramsObject = [self paramsObjectFromString:[[requestParams objectForKey:kPontoParamsParamName] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        SEL methodSelector = [self methodSelectorFromString:[requestParams objectForKey:kPontoMethodParamName] withParams:(paramsObject!=nil)?YES:NO];
         NSString *callbackId = [requestParams objectForKey:kPontoCallbackIdParamName];
 
         if (targetClassName && [targetClassName isSubclassOfClass:[PontoBaseHandler class]]) {
-            id handlerObject = [[targetClassName alloc] instance];
+            id handlerObject;
+
+            if ([targetClassName respondsToSelector:@selector(instance)]) {
+                handlerObject = [targetClassName instance];
+            }
+            else {
+                NSLog(@"Cannot create instance of class: %@", NSStringFromClass(targetClassName));
+            }
+
+            NSLog(@"handlerObject: %@", handlerObject);
+            NSLog(@"methodSelector: %@", NSStringFromSelector(methodSelector));
+            NSLog(@"params: %@", paramsObject);
 
             if (handlerObject && [handlerObject respondsToSelector:methodSelector]) {
                 id methodResponse;
 
                 if (paramsObject) {
-                    methodResponse = [handlerObject performSelector:methodSelector withObject:paramsObject];
+                    @try {
+                        id ret = [handlerObject performSelector:methodSelector withObject:paramsObject];
+                        NSLog(@"%@", ret);
+                    }
+                    @catch (NSException *ex) {
+                        NSLog(@"ex: %@", ex);
+                    }
                 }
                 else {
-                    methodResponse = [handlerObject performSelector:methodSelector];
+                    [handlerObject performSelector:methodSelector];
                 }
 
                 if (callbackId && ![callbackId isEqualToString:@""]) {
                     // TODO: Call JS callback (with id) in webView with 'methodResponse'
                 }
             }
+            else {
+                NSLog(@"Incorrect handler object ot method");
+            }
         }
         else {
             // TODO: change this!
-            NSLog(@"Class %@ is not valid Ponto Request Handler", targetClassName);
+            NSLog(@"Class %@ is not valid Ponto Request Handler", [requestParams objectForKey:kPontoTargetParamName]);
         }
     }
 }

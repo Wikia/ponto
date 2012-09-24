@@ -2,8 +2,8 @@
 //  PontoDEMOViewController.m
 //  Ponto
 //
-//  Created by Gregor on 21.09.2012.
-//
+//  Created by Gregor <grzegorz@wikia-inc.com> on 21.09.2012.
+//  Copyright (c) 2012 Wikia Sp. z o.o. All rights reserved.
 //
 
 #import "PontoDEMOViewController.h"
@@ -17,33 +17,18 @@
 
 @implementation PontoDEMOViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Create Ponto Dispatcher
-        _pontoDispatcher = [[PontoDispatcher alloc] initWithHandlerClassesPrefix:@"" andWebView:self.webView];
-
-        // Load local HTML file
-        NSString *pathToLocalFile = [[NSBundle mainBundle] pathForResource:@"pontoDemo" ofType:@"html"];
-        NSURL *localFileURL = [[NSURL alloc] initFileURLWithPath:pathToLocalFile];
-        NSURLRequest *localFileRequest = [[NSURLRequest alloc] initWithURL:localFileURL];
-        [self.webView loadRequest:localFileRequest];
-    }
-
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-}
+    // Create Ponto Dispatcher
+    self.title = @"Ponto DEMO WebView";
+    self.pontoDispatcher = [[PontoDispatcher alloc] initWithHandlerClassesPrefix:@"PontoDEMO" andWebView:self.webView];
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    // Load local HTML file
+    NSString *pathToLocalFile = [[NSBundle mainBundle] pathForResource:@"pontoDemo" ofType:@"html"];
+    NSURL *localFileURL = [[NSURL alloc] initFileURLWithPath:pathToLocalFile];
+    NSURLRequest *localFileRequest = [[NSURLRequest alloc] initWithURL:localFileURL];
+    [self.webView loadRequest:localFileRequest];
 }
 
 @end

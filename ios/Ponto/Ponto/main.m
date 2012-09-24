@@ -3,7 +3,7 @@
 //  Ponto
 //
 //  Created by Gregor on 09/21/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 Wikia Sp. z o.o. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

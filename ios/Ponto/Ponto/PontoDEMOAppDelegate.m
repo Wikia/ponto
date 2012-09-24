@@ -2,8 +2,8 @@
 //  PontoDEMOAppDelegate.m
 //  Ponto
 //
-//  Created by Gregor on 09/21/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Created by Gregor <grzegorz@wikia-inc.com> on 09/21/12.
+//  Copyright (c) 2012 Wikia Sp. z o.o. All rights reserved.
 //
 
 #import "PontoDEMOAppDelegate.h"
@@ -17,7 +17,8 @@
     // Override point for customization after application launch.
 
     PontoDEMOViewController *pontoDEMOViewController = [[PontoDEMOViewController alloc] initWithNibName:@"PontoDEMOViewController" bundle:[NSBundle mainBundle]];
-    self.window.rootViewController = pontoDEMOViewController;
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:pontoDEMOViewController];
+    self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -52,6 +53,19 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 
+}
+
+- (void)displaySendEmailMessagePickerWithRecipients:(NSArray *)recipients andSubject:(NSString *)subject andBody:(NSString *)body {
+    MFMailComposeViewController *mailComposeViewController = [[MFMailComposeViewController alloc] init];
+    mailComposeViewController.mailComposeDelegate = self;
+    [mailComposeViewController setToRecipients:recipients];
+    [mailComposeViewController setSubject:subject];
+    [mailComposeViewController setMessageBody:body isHTML:YES];
+    [self.navigationController presentModalViewController:mailComposeViewController animated:YES];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
+    [self.navigationController dismissModalViewControllerAnimated:YES];
 }
 
 @end

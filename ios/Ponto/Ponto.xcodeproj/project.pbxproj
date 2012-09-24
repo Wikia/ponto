@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		3BC46FFA160CBA6500EF9B85 /* PontoDEMOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC46FF8160CBA6500EF9B85 /* PontoDEMOViewController.m */; };
 		3BC46FFB160CBA6500EF9B85 /* PontoDEMOViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BC46FF9160CBA6500EF9B85 /* PontoDEMOViewController.xib */; };
-		3BC47007160CC06100EF9B85 /* web in Resources */ = {isa = PBXBuildFile; fileRef = 3BC47006160CC06100EF9B85 /* web */; };
+		3BC47011160CCBFD00EF9B85 /* pontoDemo.html in Resources */ = {isa = PBXBuildFile; fileRef = 6BE4606A0AA3374F68EBF395 /* pontoDemo.html */; };
+		3BC47014160CCC3A00EF9B85 /* web in Resources */ = {isa = PBXBuildFile; fileRef = 3BC47013160CCC3A00EF9B85 /* web */; };
+		3BC4702216106F3900EF9B85 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC4702116106F3900EF9B85 /* MessageUI.framework */; };
 		6BE461294C1F54F199A633DA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */; };
 		6BE461F0B974327ECDD6040F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE4608CBF63C610AEFBF725 /* Default-568h@2x.png */; };
 		6BE4633715CFDB994597632F /* PontoDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */; };
@@ -23,7 +25,9 @@
 		6BE469771F6E5E733EFD97FB /* PontoBaseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE468667F12B9175F833049 /* PontoBaseHandler.m */; };
 		6BE46AC9EF9D7888079E6617 /* PontoDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */; };
 		6BE46B62708A8778C71D3830 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE46FF755701CAC34D9AEA4 /* Default.png */; };
+		6BE46C28E5CFCDD17A958456 /* PontoDEMOMessaging.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46BF931753016EBE51652 /* PontoDEMOMessaging.m */; };
 		6BE46CA78BBAB3BDAA5BDBA6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */; };
+		6BE46D73BCBBA2F9A6AA474A /* PontoDEMOMessaging.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46BF931753016EBE51652 /* PontoDEMOMessaging.m */; };
 		6BE46DB35E3F636F5AEB453E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */; };
 		6BE46E04F9E591168928261B /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46BFCA9580E6458FB9EBC /* SenTestingKit.framework */; };
 		6BE46E47364F3AF0B6B98CBC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */; };
@@ -44,7 +48,8 @@
 		3BC46FF7160CBA6500EF9B85 /* PontoDEMOViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PontoDEMOViewController.h; sourceTree = "<group>"; };
 		3BC46FF8160CBA6500EF9B85 /* PontoDEMOViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PontoDEMOViewController.m; sourceTree = "<group>"; };
 		3BC46FF9160CBA6500EF9B85 /* PontoDEMOViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PontoDEMOViewController.xib; sourceTree = "<group>"; };
-		3BC47006160CC06100EF9B85 /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; name = web; path = ../../../../web; sourceTree = "<group>"; };
+		3BC47013160CCC3A00EF9B85 /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; name = web; path = ../../../../web; sourceTree = "<group>"; };
+		3BC4702116106F3900EF9B85 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		6BE46023DFB838841553CE7A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6BE4606A0AA3374F68EBF395 /* pontoDemo.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = pontoDemo.html; sourceTree = "<group>"; };
 		6BE4608CBF63C610AEFBF725 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -63,9 +68,11 @@
 		6BE46A58BA5C67AAED1D0F33 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		6BE46AF5FD42A3BAB1104831 /* PontoDEMOAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PontoDEMOAppDelegate.h; sourceTree = "<group>"; };
 		6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6BE46BF931753016EBE51652 /* PontoDEMOMessaging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PontoDEMOMessaging.m; sourceTree = "<group>"; };
 		6BE46BFCA9580E6458FB9EBC /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		6BE46C83278BC1BD5DB3F965 /* Ponto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ponto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6BE46D4AB6F8343C1C6BA566 /* PontoDEMOMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PontoDEMOMessaging.h; sourceTree = "<group>"; };
 		6BE46DCE10FAB9400863FEC0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6BE46E3DFE2F6474C174E7DF /* PontoTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PontoTests.h; sourceTree = "<group>"; };
 		6BE46FF755701CAC34D9AEA4 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -86,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BC4702216106F3900EF9B85 /* MessageUI.framework in Frameworks */,
 				6BE461294C1F54F199A633DA /* UIKit.framework in Frameworks */,
 				6BE46E47364F3AF0B6B98CBC /* Foundation.framework in Frameworks */,
 				6BE46608C30B793E207CDF3B /* CoreGraphics.framework in Frameworks */,
@@ -130,6 +138,7 @@
 		6BE462237E242E7B0288C80A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3BC4702116106F3900EF9B85 /* MessageUI.framework */,
 				6BE46BFCA9580E6458FB9EBC /* SenTestingKit.framework */,
 				6BE46A58BA5C67AAED1D0F33 /* CoreGraphics.framework */,
 				6BE46B77CEFBBF875DBB2E8C /* Foundation.framework */,
@@ -141,13 +150,14 @@
 		6BE464657B1F0E1D4C950DA3 /* PontoDemo */ = {
 			isa = PBXGroup;
 			children = (
+				6BE46D4AB6F8343C1C6BA566 /* PontoDEMOMessaging.h */,
+				6BE46BF931753016EBE51652 /* PontoDEMOMessaging.m */,
 				6BE466DE016372E65DE56D12 /* PontoDEMOAppDelegate.m */,
 				6BE46AF5FD42A3BAB1104831 /* PontoDEMOAppDelegate.h */,
 				6BE46093C45C33F82D79AB7B /* Supporting Files */,
 				3BC46FF7160CBA6500EF9B85 /* PontoDEMOViewController.h */,
 				3BC46FF8160CBA6500EF9B85 /* PontoDEMOViewController.m */,
 				3BC46FF9160CBA6500EF9B85 /* PontoDEMOViewController.xib */,
-				6BE464B6FEFDF2F84A9CAC33 /* html */,
 			);
 			name = PontoDemo;
 			path = Ponto;
@@ -156,7 +166,7 @@
 		6BE464B6FEFDF2F84A9CAC33 /* html */ = {
 			isa = PBXGroup;
 			children = (
-				3BC47006160CC06100EF9B85 /* web */,
+				3BC47013160CCC3A00EF9B85 /* web */,
 				6BE4606A0AA3374F68EBF395 /* pontoDemo.html */,
 			);
 			path = html;
@@ -172,6 +182,14 @@
 			path = PontoTests;
 			sourceTree = "<group>";
 		};
+		6BE468E3549FFD94E16C08A2 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6BE464B6FEFDF2F84A9CAC33 /* html */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		6BE46DB786E89936EC7536CC = {
 			isa = PBXGroup;
 			children = (
@@ -180,6 +198,7 @@
 				6BE462237E242E7B0288C80A /* Frameworks */,
 				6BE464657B1F0E1D4C950DA3 /* PontoDemo */,
 				6BE467EE7E0D429D5295DBBD /* PontoTests */,
+				6BE468E3549FFD94E16C08A2 /* Resources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -273,8 +292,9 @@
 				6BE46B62708A8778C71D3830 /* Default.png in Resources */,
 				6BE46654BA09F57036442FA8 /* Default@2x.png in Resources */,
 				6BE461F0B974327ECDD6040F /* Default-568h@2x.png in Resources */,
+				3BC47011160CCBFD00EF9B85 /* pontoDemo.html in Resources */,
 				3BC46FFB160CBA6500EF9B85 /* PontoDEMOViewController.xib in Resources */,
-				3BC47007160CC06100EF9B85 /* web in Resources */,
+				3BC47014160CCC3A00EF9B85 /* web in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +326,7 @@
 				6BE46770D0B669331645BE6D /* PontoBaseHandler.m in Sources */,
 				6BE4633715CFDB994597632F /* PontoDispatcher.m in Sources */,
 				3BC46FFA160CBA6500EF9B85 /* PontoDEMOViewController.m in Sources */,
+				6BE46C28E5CFCDD17A958456 /* PontoDEMOMessaging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +337,7 @@
 				6BE4680C8461991F91F564A0 /* PontoTests.m in Sources */,
 				6BE469771F6E5E733EFD97FB /* PontoBaseHandler.m in Sources */,
 				6BE46AC9EF9D7888079E6617 /* PontoDispatcher.m in Sources */,
+				6BE46D73BCBBA2F9A6AA474A /* PontoDEMOMessaging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

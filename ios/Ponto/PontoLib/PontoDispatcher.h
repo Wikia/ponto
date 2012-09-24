@@ -1,8 +1,8 @@
 //
 //  PontoDispatcher
-//  Game Guides
+//  Ponto
 //
-//  Created by Grzegorz Nowicki on 21.09.2012.
+//  Created by Grzegorz Nowicki <grzegorz@wikia-inc.com> on 21.09.2012.
 //  Copyright (c) 2012 Wikia Sp. z o.o. All rights reserved.
 //
 
@@ -20,8 +20,8 @@
 @interface PontoDispatcher : NSObject <UIWebViewDelegate>
 
 @property (nonatomic, strong) NSString *handlerClassesPrefix;
-@property (nonatomic, strong) UIWebView *webView;
-@property (nonatomic, assign) id <PontoDispatcherDelegate>delegate;
+@property (nonatomic, weak) UIWebView *webView;
+@property (nonatomic, weak) id <PontoDispatcherDelegate>delegate;
 
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix;
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix andWebView:(UIWebView *)webView;
