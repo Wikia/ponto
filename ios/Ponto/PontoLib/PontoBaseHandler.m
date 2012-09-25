@@ -15,7 +15,7 @@
 
 + (id)instance {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:[NSString stringWithFormat:@"You must override %s in a subclass", __PRETTY_FUNCTION__]
+                                   reason:[NSString stringWithFormat:@"The %s method needs to be overridden in PontoBaseHandler subclasses", __PRETTY_FUNCTION__]
                                  userInfo:nil];
 }
 
