@@ -17,7 +17,7 @@
 #define kPontoMethodParamName @"method"
 #define kPontoParamsParamName @"params"
 #define kPontoCallbackIdParamName @"callbackId"
-#define kPontoCallbackJSString @"Ponto.acceptResponse('%@', %d, '%@');"
+#define kPontoCallbackJSString @"Ponto.acceptResponse('%@', %d, decodeURIComponent('%@'));"
 #define kPontoHandlerMethodReturnTypeStringBufferLenght 128
 
 typedef enum {
@@ -169,24 +169,35 @@ typedef enum {
             id handlerObject;
             handlerObject = [targetClassName instance];
 
-            // TODO: FIX - what if there is no method in correct handler object???
-            id response = [self callMethod:methodSelector inHandlerObject:handlerObject withParams:paramsObject];
-
-            NSString *handlerMethodResponseJSONString = [self serializeObjectToJSONString:response];
-            [self runJSCallback:callbackId withParams:handlerMethodResponseJSONString andType:RESPONSE_COMPLETE];
+            if (handlerObject && [handlerObject respondsToSelector:methodSelector]) {
+                id response = [self callMethod:methodSelector inHandlerObject:handlerObject withParams:paramsObject];
+                [self runJSCallback:callbackId withParams:response andType:RESPONSE_COMPLETE];
+            }
+            else {
+                NSDictionary *infoDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Handler object dont have method.", @"message", [requestParams objectForKey:kPontoMethodParamName], @"methodName", nil];
+                [self runJSCallback:callbackId withParams:infoDict andType:RESPONSE_ERROR];
+            }
         }
         else {
             NSLog(@"Class %@ is not valid Ponto Request Handler", [requestParams objectForKey:kPontoTargetParamName]);
 
-            NSString *handlerMethodResponseJSONString = [self serializeObjectToJSONString:[NSDictionary dictionaryWithObjectsAndKeys:@"Class is not valid request handler.", @"message", [requestParams objectForKey:kPontoTargetParamName], @"className", nil]];
-            [self runJSCallback:callbackId withParams:handlerMethodResponseJSONString andType:RESPONSE_ERROR];
+            NSDictionary *infoDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Class is not valid request handler.", @"message", [requestParams objectForKey:kPontoTargetParamName], @"className", nil];
+            [self runJSCallback:callbackId withParams:infoDict andType:RESPONSE_ERROR];
         }
     }
 }
 
 - (void)runJSCallback:(NSString *)callbackId withParams:(id)params andType:(int)type {
+    NSString *paramsJSONString = [self serializeObjectToJSONString:params];
+    if (paramsJSONString && ![paramsJSONString isEqual:[NSNull null]]) {
+        paramsJSONString = [paramsJSONString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    }
+    else {
+        paramsJSONString = @"";
+    }
+
     if (callbackId && ![callbackId isEqual:[NSNull null]]) {
-        NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, callbackId, type, params];
+        NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, callbackId, type, paramsJSONString];
         [self.webView stringByEvaluatingJavaScriptFromString:jSCallbackString];
     }
 }
@@ -206,37 +217,32 @@ typedef enum {
 - (id)callMethod:(SEL)methodSelector inHandlerObject:(id)handlerObject withParams:(id)params {
     id response = nil;
 
-    if (handlerObject && [handlerObject respondsToSelector:methodSelector]) {
-        char methodReturnTypeDescriptionBuffer[kPontoHandlerMethodReturnTypeStringBufferLenght];
-        Method instanceMethod = class_getInstanceMethod([handlerObject class], methodSelector);
-        method_getReturnType(instanceMethod, methodReturnTypeDescriptionBuffer, kPontoHandlerMethodReturnTypeStringBufferLenght);
+    char methodReturnTypeDescriptionBuffer[kPontoHandlerMethodReturnTypeStringBufferLenght];
+    Method instanceMethod = class_getInstanceMethod([handlerObject class], methodSelector);
+    method_getReturnType(instanceMethod, methodReturnTypeDescriptionBuffer, kPontoHandlerMethodReturnTypeStringBufferLenght);
 
-        PontoHandlerMethodReturnType methodReturnType = [self convertEncodedTypeString:methodReturnTypeDescriptionBuffer];
+    PontoHandlerMethodReturnType methodReturnType = [self convertEncodedTypeString:methodReturnTypeDescriptionBuffer];
 
-        switch (methodReturnType) {
-            case PontoHandlerMethodReturnTypeObject:
-                if (params) {
-                    response = [handlerObject performSelector:methodSelector withObject:params];
-                }
-                else {
-                    response = [handlerObject performSelector:methodSelector];
-                }
-                break;
+    switch (methodReturnType) {
+        case PontoHandlerMethodReturnTypeObject:
+            if (params) {
+                response = [handlerObject performSelector:methodSelector withObject:params];
+            }
+            else {
+                response = [handlerObject performSelector:methodSelector];
+            }
+            break;
 
-            case PontoHandlerMethodReturnTypeUnknown:
-            case PontoHandlerMethodReturnTypeVoid:
-            default:
-                if (params) {
-                    [handlerObject performSelector:methodSelector withObject:params];
-                }
-                else {
-                    [handlerObject performSelector:methodSelector];
-                }
-                break;
-        }
-    }
-    else {
-        NSLog(@"Handler class %@ don't have method: %@", NSStringFromClass([handlerObject class]), NSStringFromSelector(methodSelector));
+        case PontoHandlerMethodReturnTypeUnknown:
+        case PontoHandlerMethodReturnTypeVoid:
+        default:
+            if (params) {
+                [handlerObject performSelector:methodSelector withObject:params];
+            }
+            else {
+                [handlerObject performSelector:methodSelector];
+            }
+            break;
     }
 
     return response;
