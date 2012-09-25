@@ -160,7 +160,7 @@ typedef enum {
         id paramsObject = nil;
 
         if (paramsString && ![paramsString isEqual:[NSNull null]]) {
-            paramsObject = [self deserializeObjectFromJSONString:[paramsString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            paramsObject = [self paramsObjectFromString:[paramsString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         }
 
         SEL methodSelector = [self methodSelectorFromString:[requestParams objectForKey:kPontoMethodParamName] withParams:(paramsObject!=nil)?YES:NO];
