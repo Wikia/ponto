@@ -14,76 +14,93 @@
                     "Messaging",
                     "sendMessage",
                     {subject: "Hey! Ponto is great!", to: "example@email.domain", body: "Hey! I'm using PONTO to handle native requests from webview!"},
-                    function () {
-                        console.log('success');
-                    },
-                    function () {
-                        console.log('error');
-                    });
+                    null,
+                    null);
         }
 
 
-    function domLoaded() {
-        console.log('LOADED!');
-
-        var button1, button2;
-
-        button1 = document.getElementById("call1");
-        button2 = document.getElementById("call2");
-
-        button1.onclick = function() {
-            console.log('b1');
-
-            console.log(window.Ponto);
-        }
-
-        button2.onclick = function() {
-            console.log('Try to send request via Ponto');
-            console.log(window.location);
-
+        function getSomeDataFromHandler() {
             Ponto.sendRequest(
-                    "SomeTestClass",
-                    "someTestMethod",
-                    {a:1,b:2},
-                    function(){
-                        console.log('SomeTestClass::someTestMethod SUCCESS!!');
+                    "Messaging",
+                    "getSomeDataFromHandler",
+                    null,
+                    function (params) {
+                        console.log('success with params:');
+                        console.log(params);
+                        alert('success');
                     },
-                    function() {
-                        console.log('SomeTestClass::someTestMethod ERROR!!');
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert('error');
                     });
-
-            console.log(window.location);
-            window.location = "ponto:///XXXX";
-            console.log(window.location);
         }
-    }
 
-    function testPonto() {
-        console.log("testPonto");
-        Ponto.sendRequest(
-                "SomeTestClass",
-                "someTestMethod",
-                {a:1, b:2},
-                undefined,
-                undefined);
 
-        console.log("testPonto END");
-    }
+        function testNotExistentMethodInHandler() {
+            Ponto.sendRequest(
+                    "Messaging",
+                    "someFakeMethod",
+                    null,
+                    null,
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert('Ups!');
+                    });
+        }
 
+
+        function testNotExistentHandler() {
+            Ponto.sendRequest(
+                    "NotExistClass",
+                    "NotExistMethod",
+                    null,
+                    function (params) {
+                        alert('This is not possible!');
+                    },
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert(params.message);
+                    });
+        }
+
+        function testNotExistentHandlerWithoutSuccessHandler() {
+            Ponto.sendRequest(
+                    "NotExistClass",
+                    "NotExistMethod",
+                    null,
+                    null,
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert(params.message);
+                    });
+        }
     </script>
 </head>
-<body onload="domLoaded()">
-    <h1>Ponto DEMO</h1>
+<body>
+    <h1>Ponto DEMO HTML</h1>
     <ul>
         <li>
-            <button onclick="sendMessage()">Send test message</button>
+            <button onclick="sendMessage()">Display send email popup.</button>
         </li>
 
         <li>
-            <button id="call2">Test 2</button>
+            <button onclick="getSomeDataFromHandler()">Get some data from handler.</button>
         </li>
+
         <li>
-            <button id="call3" onclick="testPonto()">Test Ponto</button>
+            <button onclick="testNotExistentMethodInHandler()">Test non existent method.</button>
+        </li>
+
+        <li>
+            <button onclick="testNotExistentHandler()">Test not existent handler.</button>
+        </li>
+
+        <li>
+            <button onclick="testNotExistentHandlerWithoutSuccessHandler()">Test not existent handler 2.</button>
         </li>
     </ul>
 </body>

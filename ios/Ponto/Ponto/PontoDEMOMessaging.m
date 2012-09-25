@@ -32,9 +32,19 @@
         else if ([recipients isKindOfClass:[NSString class]]) {
             [app displaySendEmailMessagePickerWithRecipients:[NSArray arrayWithObject:(NSString *)recipients] andSubject:subject andBody:body];
         }
+        else{
+            [app displaySendEmailMessagePickerWithRecipients:nil andSubject:subject andBody:body];
+        }
     }
+}
 
-    return;
+- (NSDictionary *)getSomeDataFromHandler {
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            @"wikia.com", @"url",
+            @"iOS", @"current_platform",
+            @"0.1", @"ponto_version",
+            nil
+    ];
 }
 
 @end
