@@ -8,7 +8,7 @@
 
     <script type="text/javascript">
         function sendMessage() {
-            Ponto.sendRequest(
+            Ponto.invoke(
                     "Messaging",
                     "sendMessage",
                     {subject: "Hey! Ponto is great!", to: "example@email.domain", body: "Hey! I'm using PONTO to handle native requests from webview!"},
@@ -18,7 +18,7 @@
 
 
         function getSomeDataFromHandler() {
-            Ponto.sendRequest(
+            Ponto.invoke(
                     "Messaging",
                     "getSomeDataFromHandler",
                     null,
@@ -36,7 +36,7 @@
 
 
         function testNotExistentMethodInHandler() {
-            Ponto.sendRequest(
+            Ponto.invoke(
                     "Messaging",
                     "someFakeMethod",
                     null,
@@ -50,7 +50,7 @@
 
 
         function testNotExistentHandler() {
-            Ponto.sendRequest(
+            Ponto.invoke(
                     "NotExistClass",
                     "NotExistMethod",
                     null,
@@ -65,7 +65,7 @@
         }
 
         function testNotExistentHandlerWithoutSuccessHandler() {
-            Ponto.sendRequest(
+            Ponto.invoke(
                     "NotExistClass",
                     "NotExistMethod",
                     null,

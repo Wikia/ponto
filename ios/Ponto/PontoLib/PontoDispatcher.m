@@ -17,7 +17,7 @@
 #define kPontoMethodParamName @"method"
 #define kPontoParamsParamName @"params"
 #define kPontoCallbackIdParamName @"callbackId"
-#define kPontoCallbackJSString @"Ponto.acceptResponse('%@', %d, decodeURIComponent('%@'));"
+#define kPontoCallbackJSString @"Ponto.response(decodeURIComponent('%@'));"
 #define kPontoHandlerMethodReturnTypeStringBufferLenght 128
 
 typedef enum {
@@ -188,17 +188,16 @@ typedef enum {
 }
 
 - (void)runJSCallback:(NSString *)callbackId withParams:(id)params andType:(int)type {
-    NSString *paramsJSONString = [self serializeObjectToJSONString:params];
-    if (paramsJSONString && ![paramsJSONString isEqual:[NSNull null]]) {
-        paramsJSONString = [paramsJSONString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    }
-    else {
-        paramsJSONString = @"";
-    }
-
     if (callbackId && ![callbackId isEqual:[NSNull null]]) {
-        NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, callbackId, type, paramsJSONString];
-        [self.webView stringByEvaluatingJavaScriptFromString:jSCallbackString];
+        NSDictionary *callbackDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                callbackId, @"callbackId",
+                [NSNumber numberWithInt:type], @"type",
+                params, @"params",
+                nil
+        ];
+
+        NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, [self serializeObjectToJSONString:callbackDict]];
+        [self.webView stringByEvaluatingJavaScriptFromString:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     }
 }
 
