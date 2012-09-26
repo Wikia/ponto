@@ -8,8 +8,8 @@ exchange of data across web/native contextes.
 Rationale
 ---------
 
-Some popular HTML5-based cross-platform frameworks for mobile application development, such as [Apache PhoneGap/Cordova]()
-and [Trigger.IO]() (but also non-HTML5 frameworks as it happens for [Appcelerator Titanium]()'s WebViews) are built on the
+Some popular HTML5-based cross-platform frameworks for mobile application development, such as [Apache PhoneGap/Cordova](http://incubator.apache.org/cordova/)
+and [Trigger.IO](http://trigger.io) (but also non-HTML5 frameworks as it happens for [Appcelerator Titanium](http://www.appcelerator.com/platform/titanium-sdk/)'s WebViews) are built on the
 top of inter-context communication, i.e. the JavaScript code running in the WebView is able to interact with classes/methods hosted
 in the native layer to access platform capabilities not accessible using the DOM API (e.g. the device's filesystem or
 camera) while the native app code is able to send information back to the WebView (e.g. the list of images in the device's
