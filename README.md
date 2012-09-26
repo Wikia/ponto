@@ -1,13 +1,37 @@
 Ponto
 =====
 
-A native iOS (Obj-C) and Android (Java) to Webview (JavaScript) bridge for
-exchanging data across contextes.
+An iOS (Obj-C), Android (Java) and WebView (JavaScript) bridge for an easy
+exchange of data across web/native contextes.
+
+
+Rationale
+---------
+
+Some popular HTML5-based cross-platform frameworks for mobile application development, such as [Apache PhoneGap/Cordova]()
+and [Trigger.IO]() (but also non-HTML5 frameworks as it happens for [Appcelerator Titanium]()'s WebViews) are built on the
+top of inter-context communication, i.e. the JavaScript code running in the WebView is able to interact with classes/methods hosted
+in the native layer to access platform capabilities not accessible using the DOM API (e.g. the device's filesystem or
+camera) while the native app code is able to send information back to the WebView (e.g. the list of images in the device's
+media library).
+
+Native Android/iOS applications that implement WebViews in their flow may need, at any given point to be able to do the
+same.
+
+The aforementioned existing implementations aren't abstract enough to be extracted and reused out of the box, most of the
+times their code contains quirks that make sense in the context of the specific framework making the code not generic enough
+to be embedded in another application easily or without refactoring it.
+
+For those reasons we have developed **Ponto** (*"bridge"* in Esperanto), a generic library that can do all of the above and
+it's ready to be embedded in any iOS/Android app using WebViews with a simple API.
+
 
 Documentation
 -------------
 
-Coming soon :)
+* [WebView/Javascript documentation](https://github.com/wikiaapps/Ponto/blob/master/web/README.md)
+* Android/Java: coming soon
+* iOS/Objective-C: coming soon
 
 
 Credits
