@@ -22,7 +22,7 @@ mWebView.loadUrl("javascript:Ponto.request(\"{\\\"target\\\": \\\"TypeOrModuleNa
 ```
 
 ```objective-c
-[mWebView stringByEvaluatingJavaScriptFromString:@'javascript:Ponto.request(\"{\\\"target\\\": \\\"TypeOrModuleName\\\", \\\"method\\\": \\\"methodName\\\", \\\"params\\\":{\\\"a\\\":1}, \\\"callbackId\\\": \\\"callbackId\\\"}\";'];
+[mWebView stringByEvaluatingJavaScriptFromString:@"javascript:Ponto.request(\"{\\\"target\\\": \\\"TypeOrModuleName\\\", \\\"method\\\": \\\"methodName\\\", \\\"params\\\":{\\\"a\\\":1}, \\\"callbackId\\\": \\\"callbackId\\\"}\";"];
 ```
 
 Ponto.request accept a JSON-encoded string of an hash/dictionary containing the required data; *params* and *callbackId* are optional.
@@ -34,7 +34,7 @@ mWebView.loadUrl("javascript:Ponto.response(\"{\\\"type\\\": 0, \\\"params\\\":{
 ```
 
 ```objective-c
-[mWebView stringByEvaluatingJavaScriptFromString:@'javascript:Ponto.response(\"{\\\"type\\\": 0, \\\"params\\\":{\\\"a\\\":1}, \\\"callbackId\\\": \\\"callbackId\\\"}\");'];
+[mWebView stringByEvaluatingJavaScriptFromString:@"javascript:Ponto.response(\"{\\\"type\\\": 0, \\\"params\\\":{\\\"a\\\":1}, \\\"callbackId\\\": \\\"callbackId\\\"}\");"];
 ```
 
 Ponto.response accept a JSON-encoded string of an hash/dictionary containing the required data; *params* is optional and *type* is either 0 (completed successfully) or 1 (error occurred).
