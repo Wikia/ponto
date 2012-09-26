@@ -29,7 +29,7 @@ Ponto.request accept a JSON-encoded string of an hash/dictionary containing the 
 
 **To invoke a callback in the WebView from the native layer** after the method invoked by the WebView has completed or resulted in an error use:
 
-``java
+```java
 mWebView.loadUrl("javascript:Ponto.response(\"{\\\"type\\\": 0, \\\"params\\\":{\\\"a\\\":1}, \\\"callbackId\\\": \\\"callbackId\\\"}\");");
 ```
 
