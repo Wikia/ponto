@@ -146,9 +146,8 @@
 		 * @param {Mixed} target A reference to a constructor or a static instance
 		 * @param {RequestParams} data An hash containing the parameters associated to the request
 		 */
-		function dispatchRequest(scope, data) {
+		function dispatchRequest(scope, target, data) {
 			var instance,
-				target = data.target,
 				result;
 
 			if (target && target.handlerSuper === PontoBaseHandler && target.getInstance) {
