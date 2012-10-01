@@ -250,7 +250,7 @@
 		 * @param {Object} scope The execution scope to bind to this instance
 		 */
 		function PontoDispatcher(dispatchContext) {
-			this.context = context;
+			this.context = dispatchContext;
 		}
 
 		/**
