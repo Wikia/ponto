@@ -128,7 +128,8 @@
 		 * of a type to be converted in a PontoBaseHandler subtype
 		 *
 		 * @example
-		 * Ponto.PontoBaseHandler.derive(function MyHandler(){...});
+		 * function MyHandler(){...}
+		 * Ponto.PontoBaseHandler.derive(MyHandler);
 		 * MyHandler.getInstance = function() {...};
 		 */
 		PontoBaseHandler.derive = function (constructor) {
