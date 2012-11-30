@@ -7,7 +7,6 @@
 //
 
 #import "PontoDEMOViewController.h"
-#import "PontoDispatcher.h"
 
 @interface PontoDEMOViewController ()
 
@@ -19,16 +18,34 @@
 
 - (void)viewDidLoad
 {
+
+
     [super viewDidLoad];
+
+
     // Create Ponto Dispatcher
     self.title = @"Ponto DEMO WebView";
     self.pontoDispatcher = [[PontoDispatcher alloc] initWithHandlerClassesPrefix:@"PontoDEMO" andWebView:self.webView];
+
+    // try to call JS method
+    [self.pontoDispatcher invokeMethod:@"testMethod" onTarget:@"TODO_target" withParams:nil andCallbackDelegate:self];
 
     // Load local HTML file
     NSString *pathToLocalFile = [[NSBundle mainBundle] pathForResource:@"pontoDemo" ofType:@"html"];
     NSURL *localFileURL = [[NSURL alloc] initFileURLWithPath:pathToLocalFile];
     NSURLRequest *localFileRequest = [[NSURLRequest alloc] initWithURL:localFileURL];
     [self.webView loadRequest:localFileRequest];
+}
+
+
+#pragma mark - PontoDispatcherCallbackDelegate methods
+
+- (void)successCallbackWithParams:(id)params {
+    NSLog(@"success callback with params: %@", params);
+}
+
+- (void)errorCallbackWithParams:(id)params {
+    NSLog(@"error callback with params: %@", params);
 }
 
 @end

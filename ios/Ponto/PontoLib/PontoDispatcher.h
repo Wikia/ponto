@@ -17,6 +17,13 @@
 @end
 
 
+@protocol PontoDispatcherCallbackDelegate <NSObject>
+@optional
+- (void)successCallbackWithParams:(id)params;
+- (void)errorCallbackWithParams:(id)params;
+
+@end
+
 @interface PontoDispatcher : NSObject <UIWebViewDelegate>
 
 @property (nonatomic, strong) NSString *handlerClassesPrefix;
@@ -25,5 +32,8 @@
 
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix;
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix andWebView:(UIWebView *)webView;
+
+- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params andCallbackDelegate:(id<PontoDispatcherCallbackDelegate>)callbackDelegate;
+- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params successBlock:(void(^)(id params))successBlock errorBlock:(void(^)(id params)) errorBlock;
 
 @end

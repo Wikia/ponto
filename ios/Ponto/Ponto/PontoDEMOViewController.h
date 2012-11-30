@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PontoDispatcher.h"
 
-@interface PontoDEMOViewController : UIViewController
+@interface PontoDEMOViewController : UIViewController <PontoDispatcherCallbackDelegate>
 
 @property (strong, nonatomic) IBOutlet UIWebView *webView;
 @end

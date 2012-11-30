@@ -7,7 +7,7 @@
 //
 
 #import "PontoDispatcher.h"
-#include <objc/objc-runtime.h>
+#import <objc/objc-runtime.h>
 
 #define RESPONSE_COMPLETE 0
 #define RESPONSE_ERROR 1
@@ -18,7 +18,10 @@
 #define kPontoParamsParamName @"params"
 #define kPontoCallbackIdParamName @"callbackId"
 #define kPontoCallbackJSString @"Ponto.response(decodeURIComponent('%@'));"
+#define kPontoMethodInvokeJSString @"Ponto.request(decodeURIComponent('%@'));"
 #define kPontoHandlerMethodReturnTypeStringBufferLenght 128
+#define kPontoRequestUrlPath @"/request"
+#define kPontoResponseUrlPath @"/response"
 
 typedef enum {
     PontoHandlerMethodReturnTypeVoid,
@@ -27,6 +30,12 @@ typedef enum {
     PontoHandlerMethodReturnTypeDouble,
     PontoHandlerMethodReturnTypeUnknown
 } PontoHandlerMethodReturnType;
+
+
+@interface PontoDispatcher()
+@property (nonatomic, strong) NSMutableArray *callbacks;
+@end
+
 
 @implementation PontoDispatcher {
 
@@ -39,6 +48,7 @@ typedef enum {
     self = [super init];
     if (self) {
         _handlerClassesPrefix = classesPrefix;
+        _callbacks = [[NSMutableArray alloc] init];
     }
 
     return self;
@@ -60,6 +70,50 @@ typedef enum {
     return self;
 }
 
+#pragma mark - JS method invoking
+
+/**
+ * Invoke JS method with callback delegate
+ */
+- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params andCallbackDelegate:(id <PontoDispatcherCallbackDelegate>)callbackDelegate {
+    NSString *callbackId = nil;
+
+    if (callbackDelegate) {
+        @synchronized (self) {
+            [self.callbacks addObject:callbackDelegate];
+            callbackId = [NSString stringWithFormat:@"cbid_%d", [self.callbacks count] - 1];
+        }
+    }
+
+    NSDictionary *mehodInvokeDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+            target, @"target",
+            params, @"params",
+            callbackId, @"callbackId",
+            nil
+    ];
+
+    NSLog(@"invokeJS callbackID: %@", callbackId);
+}
+
+/**
+ * Invoke JS method with success and error blocks
+ */
+- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params successBlock:(void (^)(id))successBlock errorBlock:(void (^)(id))errorBlock {
+    NSMutableDictionary *callbacksDict = [NSMutableDictionary dictionary];
+
+    if (successBlock) {
+        [callbacksDict setObject:successBlock forKey:@"successBlock"];
+    }
+
+    if (errorBlock) {
+        [callbacksDict setObject:errorBlock forKey:@"errorBlock"];
+    }
+
+
+
+}
+
+
 #pragma mark - WebView Setter
 
 // WebView setter - set PontoDispatcher as delegate of webView
@@ -75,13 +129,26 @@ typedef enum {
     NSURL *url = [request URL];
 
     if ([[url scheme] isEqualToString:kPontoUrlScheme]) {
-        NSDictionary *requestParams = [self extractRequestParams:url];
+        NSLog(@"host: %@", [url path]);
 
-        if (requestParams) {
-            [self dispatch:requestParams];
+        if ([[url path] isEqualToString:kPontoRequestUrlPath]) {
+            NSDictionary *requestParams = [self extractRequestParams:url];
+
+            if (requestParams) {
+                [self dispatchRequest:requestParams];
+            }
+
+            return NO;
         }
+        else if ([[url path] isEqualToString:kPontoResponseUrlPath]) {
+            NSDictionary *responseParams = [self extractResponseParams:url];
 
-        return NO;
+            if (responseParams) {
+
+            }
+
+            return NO;
+        }
     }
 
     return YES;
@@ -89,10 +156,10 @@ typedef enum {
 
 #pragma mark - Private methods
 
-- (NSDictionary *)extractRequestParams:(NSURL *)requestUrl {
+- (NSDictionary *)extractParamsFromUrl:(NSURL *)url {
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
 
-    for (NSString *param in [[requestUrl query] componentsSeparatedByString:@"&"]) {
+    for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
         NSArray *element = [param componentsSeparatedByString:@"="];
 
         if([element count] < 2) {
@@ -102,6 +169,12 @@ typedef enum {
         [params setObject:[element objectAtIndex:1] forKey:[element objectAtIndex:0]];
     }
 
+    return params;
+}
+
+- (NSDictionary *)extractRequestParams:(NSURL *)requestUrl {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[self extractParamsFromUrl:requestUrl]];
+
     return [params dictionaryWithValuesForKeys:[NSArray arrayWithObjects:kPontoTargetParamName,
                                                                          kPontoMethodParamName,
                                                                          kPontoParamsParamName,
@@ -109,9 +182,17 @@ typedef enum {
                                                                          nil]];
 }
 
+- (NSDictionary *)extractResponseParams:(NSURL *)responseUrl {
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[self extractParamsFromUrl:responseUrl]];
+
+    return [params dictionaryWithValuesForKeys:[NSArray arrayWithObjects:kPontoCallbackIdParamName,
+                                                                         kPontoParamsParamName,
+                                                                         nil]];
+}
+
 // Add prefix to class name and return as Class
 - (Class)classNameFromString:(NSString *)className {
-    NSString *prefixedClassName = [NSString stringWithFormat:@"%@%@", self.handlerClassesPrefix, className, nil];
+    NSString *prefixedClassName = [NSString stringWithFormat:@"%@%@", self.handlerClassesPrefix, className];
     return NSClassFromString(prefixedClassName);
 }
 
@@ -151,7 +232,7 @@ typedef enum {
     return [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
 }
 
-- (void)dispatch:(NSDictionary *)requestParams {
+- (void)dispatchRequest:(NSDictionary *)requestParams {
     if (requestParams && [requestParams objectForKey:kPontoTargetParamName] && [requestParams objectForKey:kPontoMethodParamName]) {
         Class targetClassName = [self classNameFromString:[requestParams objectForKey:kPontoTargetParamName]];
         NSString *callbackId = [requestParams objectForKey:kPontoCallbackIdParamName];
@@ -187,6 +268,12 @@ typedef enum {
     }
 }
 
+- (void)dispatchResponse:(NSDictionary *)responseParams {
+    if (responseParams && [responseParams objectForKey:kPontoCallbackIdParamName]) {
+
+    }
+}
+
 - (void)runJSCallback:(NSString *)callbackId withParams:(id)params andType:(int)type {
     if (callbackId && ![callbackId isEqual:[NSNull null]]) {
         NSDictionary *callbackDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -197,6 +284,8 @@ typedef enum {
         ];
 
         NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, [self serializeObjectToJSONString:callbackDict]];
+
+        NSLog(@"try to call callback: %@", jSCallbackString);
         [self.webView stringByEvaluatingJavaScriptFromString:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     }
 }
