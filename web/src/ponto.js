@@ -40,7 +40,7 @@
 			 * @see  protocol.request
 			 * @see  protocol.response
 			 */
-			PROTOCOL_NAME = 'ponto',
+				PROTOCOL_NAME = 'ponto',
 
 			/**
 			 * [Constant] Represents a completed request
@@ -51,7 +51,7 @@
 			 *
 			 * @see  Ponto.acceptResponse
 			 */
-			RESPONSE_COMPLETE = 0,
+				RESPONSE_COMPLETE = 0,
 
 			/**
 			 * [Constant] Represents a failed request with errors
@@ -62,7 +62,7 @@
 			 *
 			 * @see  Ponto.acceptResponse
 			 */
-			RESPONSE_ERROR = 1,
+				RESPONSE_ERROR = 1,
 
 			/**
 			 * Registry for complete/error callbacks
@@ -71,7 +71,7 @@
 			 *
 			 * @type {Object}
 			 */
-			callbacks = {},
+				callbacks = {},
 
 			/**
 			 * Protocol helper
@@ -81,14 +81,14 @@
 			 *
 			 * @type {Object}
 			 */
-			protocol = context.PontoProtocol || {
+				protocol = context.PontoProtocol || {
 				//the only other chance is for the native layer to register
 				//a custom protocol for communicating with the webview (e.g. iOS)
 				request: function (execContext, target, method, params, callbackId) {
 					if (execContext.location && execContext.location.href) {
 						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
 							'&method=' + encodeURIComponent(method) +
-							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '') +
+							((params) ? '&params=' + encodeURIComponent(params) : '') +
 							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 					} else {
 						throw "Context doesn't support User Agent location API";
@@ -128,7 +128,8 @@
 		 * of a type to be converted in a PontoBaseHandler subtype
 		 *
 		 * @example
-		 * Ponto.PontoBaseHandler.derive(function MyHandler(){...});
+		 * function MyHandler(){...}
+		 * Ponto.PontoBaseHandler.derive(MyHandler);
 		 * MyHandler.getInstance = function() {...};
 		 */
 		PontoBaseHandler.derive = function (constructor) {
@@ -146,9 +147,8 @@
 		 * @param {Mixed} target A reference to a constructor or a static instance
 		 * @param {RequestParams} data An hash containing the parameters associated to the request
 		 */
-		function dispatchRequest(scope, data) {
+		function dispatchRequest(scope, target, data) {
 			var instance,
-				target = data.target,
 				result;
 
 			if (target && target.handlerSuper === PontoBaseHandler && target.getInstance) {
@@ -187,13 +187,13 @@
 				responseType = data.type;
 
 				switch (responseType) {
-				case RESPONSE_COMPLETE:
-					callback = cbGroup.complete;
-					break;
-				case RESPONSE_ERROR:
-				default:
-					callback = cbGroup.error;
-					break;
+					case RESPONSE_COMPLETE:
+						callback = cbGroup.complete;
+						break;
+					case RESPONSE_ERROR:
+					default:
+						callback = cbGroup.error;
+						break;
 				}
 
 				if (callback) {
@@ -251,7 +251,7 @@
 		 * @param {Object} scope The execution scope to bind to this instance
 		 */
 		function PontoDispatcher(dispatchContext) {
-			this.context = context;
+			this.context = dispatchContext;
 		}
 
 		/**
@@ -325,7 +325,7 @@
 				};
 			}
 
-			protocol.request(this.context, target, method, params, callbackId);
+			protocol.request(this.context, target, method, JSON.stringify(params), callbackId);
 		};
 
 		exports = new PontoDispatcher(context);
