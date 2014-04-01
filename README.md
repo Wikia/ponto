@@ -29,7 +29,7 @@ it's ready to be embedded in any iOS/Android app using WebViews with a simple AP
 Documentation
 -------------
 
-* [WebView/Javascript documentation](https://github.com/wikiaapps/Ponto/blob/master/web/README.md)
+* [WebView/Javascript documentation](https://github.com/Wikia/ponto/blob/master/web/README.md)
 * Android/Java: coming soon
 * iOS/Objective-C: coming soon
 
@@ -43,4 +43,4 @@ This project exists thanks to the efforts of:
 * [Federico "Lox" Lucignano](https://github.com/federico-lox) (WebView/JavaScript)
 * [Grzegorz Nowicki](https://github.com/wikia-gregor) (iOS/Objective-C)
 * [Jakub Olek](https://github.com/hakubo) (planning support)
-* all the [contributors](https://github.com/wikiaapps/Ponto/graphs/contributors)
+* all the [contributors](https://github.com/Wikia/ponto/graphs/contributors)
