@@ -12,7 +12,6 @@
 		3BC47011160CCBFD00EF9B85 /* pontoDemo.html in Resources */ = {isa = PBXBuildFile; fileRef = 6BE4606A0AA3374F68EBF395 /* pontoDemo.html */; };
 		3BC47014160CCC3A00EF9B85 /* web in Resources */ = {isa = PBXBuildFile; fileRef = 3BC47013160CCC3A00EF9B85 /* web */; };
 		3BC4702216106F3900EF9B85 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC4702116106F3900EF9B85 /* MessageUI.framework */; };
-		3BC470251611C73E00EF9B85 /* libobjc.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC470241611C73E00EF9B85 /* libobjc.A.dylib */; };
 		6BE461294C1F54F199A633DA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BE46CDD43F0AE5328FB15E1 /* UIKit.framework */; };
 		6BE461F0B974327ECDD6040F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BE4608CBF63C610AEFBF725 /* Default-568h@2x.png */; };
 		6BE4633715CFDB994597632F /* PontoDispatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BE46633588BC0F02C8BABC1 /* PontoDispatcher.m */; };
@@ -95,7 +94,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BC470251611C73E00EF9B85 /* libobjc.A.dylib in Frameworks */,
 				3BC4702216106F3900EF9B85 /* MessageUI.framework in Frameworks */,
 				6BE461294C1F54F199A633DA /* UIKit.framework in Frameworks */,
 				6BE46E47364F3AF0B6B98CBC /* Foundation.framework in Frameworks */,
@@ -261,6 +259,8 @@
 /* Begin PBXProject section */
 		6BE46A497320EB524FF754F6 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 6BE46E9490E9050BBD4C5957 /* Build configuration list for PBXProject "Ponto" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
