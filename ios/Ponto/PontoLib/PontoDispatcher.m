@@ -7,7 +7,8 @@
 //
 
 #import "PontoDispatcher.h"
-#import <objc/objc-runtime.h>
+#import <objc/objc.h>
+#import <objc/message.h>
 
 #define RESPONSE_COMPLETE 0
 #define RESPONSE_ERROR 1
