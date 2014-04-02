@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Wikia Sp. z o.o. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface PontoTests : SenTestCase
+@interface PontoTests : XCTestCase
 
 @end
