@@ -13,4 +13,5 @@ Pod::Spec.new do |s|
   s.source_files     = 'ios/Ponto/PontoLib/*.{h,m}'
   s.source           = { :git => "https://github.com/Wikia/ponto.git", :tag => s.version.to_s }
   s.requires_arc = true
+
 end
