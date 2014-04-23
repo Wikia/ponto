@@ -33,7 +33,6 @@
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix;
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix andWebView:(UIWebView *)webView;
 
-- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params andCallbackDelegate:(id<PontoDispatcherCallbackDelegate>)callbackDelegate;
 - (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params successBlock:(void(^)(id params))successBlock errorBlock:(void(^)(id params)) errorBlock;
 
 @end
