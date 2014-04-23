@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Ponto"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "Ponto is comunication bridge between HTML and Native."
   s.description      = <<-DESC
                        Ponto is comunication bridge between HTML and Native.
@@ -13,5 +13,6 @@ Pod::Spec.new do |s|
   s.source_files     = 'ios/Ponto/PontoLib/*.{h,m}'
   s.source           = { :git => "https://github.com/Wikia/ponto.git", :tag => s.version.to_s }
   s.requires_arc = true
+  # s.dependency 'NSURL+QueryDictionary'
 
 end

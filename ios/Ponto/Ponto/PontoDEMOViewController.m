@@ -28,7 +28,12 @@
     self.pontoDispatcher = [[PontoDispatcher alloc] initWithHandlerClassesPrefix:@"PontoDEMO" andWebView:self.webView];
 
     // try to call JS method
-    [self.pontoDispatcher invokeMethod:@"testMethod" onTarget:@"TODO_target" withParams:nil andCallbackDelegate:self];
+    [self.pontoDispatcher invokeMethod:@"testMethod" onTarget:@"TODO_target" withParams:nil successBlock:^(id params) {
+
+    } errorBlock:^(id params) {
+
+    }];
+
 
     // Load local HTML file
     NSString *pathToLocalFile = [[NSBundle mainBundle] pathForResource:@"pontoDemo" ofType:@"html"];

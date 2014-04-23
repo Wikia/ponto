@@ -7,22 +7,38 @@
 //
 
 #import "PontoDispatcher.h"
-#import <objc/objc.h>
 #import <objc/message.h>
+#import "NSURL+QueryDictionary.h"
 
 #define RESPONSE_COMPLETE 0
 #define RESPONSE_ERROR 1
 
-#define kPontoUrlScheme @"ponto"
-#define kPontoTargetParamName @"target"
-#define kPontoMethodParamName @"method"
-#define kPontoParamsParamName @"params"
-#define kPontoCallbackIdParamName @"callbackId"
-#define kPontoCallbackJSString @"Ponto.response(decodeURIComponent('%@'));"
-#define kPontoMethodInvokeJSString @"Ponto.request(decodeURIComponent('%@'));"
-#define kPontoHandlerMethodReturnTypeStringBufferLenght 128
-#define kPontoRequestUrlPath @"/request"
-#define kPontoResponseUrlPath @"/response"
+NSString *const kPontoUrlScheme = @"ponto";
+NSString *const kPontoTargetParamName = @"target";
+NSString *const kPontoMethodParamName = @"method";
+NSString *const kPontoParamsParamName = @"params";
+NSString *const kPontoCallbackIdParamName = @"callbackId";
+NSString *const kPontoCallbackJSString = @"Ponto.response(decodeURIComponent('%@'));";
+NSString *const kPontoMethodInvokeJSString = @"Ponto.request(decodeURIComponent('%@'));";
+NSString *const kPontoRequestUrlPath = @"/request";
+NSString *const kPontoResponseUrlPath = @"/response";
+
+NSInteger const kPontoHandlerMethodReturnTypeStringBufferLenght = 128;
+
+NSString *const kPontoSuccessCallbackBlockKey = @"successBlock";
+NSString *const kPontoErrorCallbackBlockKey = @"errorBlock";
+
+typedef void (^PontoSuccessCallback)(id responseObject);
+typedef void (^PontoErrorCallback)(id responseObject);
+
+static dispatch_queue_t ponto_dispatcher_concurrent_queue;
+static dispatch_queue_t getPontoQueue() {
+    if (ponto_dispatcher_concurrent_queue == nil) {
+        ponto_dispatcher_concurrent_queue = dispatch_queue_create("com.wikia.ponto.queue", DISPATCH_QUEUE_CONCURRENT);
+    }
+
+    return ponto_dispatcher_concurrent_queue;
+}
 
 typedef enum {
     PontoHandlerMethodReturnTypeVoid,
@@ -34,7 +50,8 @@ typedef enum {
 
 
 @interface PontoDispatcher()
-@property (nonatomic, strong) NSMutableArray *callbacks;
+    @property (nonatomic, strong) NSMutableArray *callbacksQueue;
+    @property (nonatomic, assign) id originalWebViewDelegate;
 @end
 
 
@@ -49,7 +66,7 @@ typedef enum {
     self = [super init];
     if (self) {
         _handlerClassesPrefix = classesPrefix;
-        _callbacks = [[NSMutableArray alloc] init];
+        _callbacksQueue = [NSMutableArray array];
     }
 
     return self;
@@ -74,53 +91,46 @@ typedef enum {
 #pragma mark - JS method invoking
 
 /**
- * Invoke JS method with callback delegate
- */
-- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params andCallbackDelegate:(id <PontoDispatcherCallbackDelegate>)callbackDelegate {
-    NSString *callbackId = nil;
-
-    if (callbackDelegate) {
-        @synchronized (self) {
-            [self.callbacks addObject:callbackDelegate];
-            callbackId = [NSString stringWithFormat:@"cbid_%d", [self.callbacks count] - 1];
-        }
-    }
-
-    NSDictionary *mehodInvokeDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-            target, @"target",
-            params, @"params",
-            callbackId, @"callbackId",
-            nil
-    ];
-
-    NSLog(@"invokeJS callbackID: %@", callbackId);
-}
-
-/**
  * Invoke JS method with success and error blocks
  */
-- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params successBlock:(void (^)(id))successBlock errorBlock:(void (^)(id))errorBlock {
+- (void)invokeMethod:(NSString *)methodName onTarget:(NSString *)target withParams:(id)params successBlock:(PontoSuccessCallback)successBlock errorBlock:(PontoErrorCallback)errorBlock {
     NSMutableDictionary *callbacksDict = [NSMutableDictionary dictionary];
+    __block NSString *callbackId = nil;
 
     if (successBlock) {
-        [callbacksDict setObject:successBlock forKey:@"successBlock"];
+        [callbacksDict setObject:successBlock forKey:kPontoSuccessCallbackBlockKey];
     }
 
     if (errorBlock) {
-        [callbacksDict setObject:errorBlock forKey:@"errorBlock"];
+        [callbacksDict setObject:errorBlock forKey:kPontoErrorCallbackBlockKey];
     }
 
+    dispatch_barrier_sync(getPontoQueue(), ^{
+        [self.callbacksQueue addObject:callbacksDict];
+        callbackId = [NSString stringWithFormat:@"%d", [self.callbacksQueue count] - 1];
+    });
 
+    NSDictionary *methodInvokeDict = [[NSDictionary alloc] initWithObjectsAndKeys:
+            target, @"target",
+            methodName, @"method",
+            callbackId, @"callbackId",
+            params, @"params",
+            nil
+    ];
 
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:methodInvokeDict options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *methodInvokeString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSString *jsString = [[NSString stringWithFormat:kPontoMethodInvokeJSString, methodInvokeString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self.webView stringByEvaluatingJavaScriptFromString:jsString];
 }
 
 
 #pragma mark - WebView Setter
 
 // WebView setter - set PontoDispatcher as delegate of webView
-// TODO: make PontoDispatcher smoething like proxy dispatcher if one dispatcher is already set
 - (void)setWebView:(UIWebView *)webView {
     _webView = webView;
+    _originalWebViewDelegate = _webView.delegate;
     _webView.delegate = self;
 }
 
@@ -128,6 +138,8 @@ typedef enum {
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     NSURL *url = [request URL];
+
+    NSLog(@"Should response to: %@", [url absoluteString]);
 
     if ([[url scheme] isEqualToString:kPontoUrlScheme]) {
         NSLog(@"host: %@", [url path]);
@@ -145,31 +157,42 @@ typedef enum {
             NSDictionary *responseParams = [self extractResponseParams:url];
 
             if (responseParams) {
-
+                [self dispatchResponse:responseParams];
             }
 
             return NO;
         }
     }
 
+    if (self.originalWebViewDelegate != nil && [self.originalWebViewDelegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)]) {
+        return [self.originalWebViewDelegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
+    }
+
     return YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    if ([self.originalWebViewDelegate respondsToSelector:@selector(webViewDidStartLoad:)]) {
+        [self.originalWebViewDelegate webViewDidStartLoad:webView];
+    }
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    if ([self.originalWebViewDelegate respondsToSelector:@selector(webViewDidFinishLoad:)]) {
+        [self.originalWebViewDelegate webViewDidFinishLoad:webView];
+    }
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    if ([self.originalWebViewDelegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
+        [self.originalWebViewDelegate webView:webView didFailLoadWithError:error];
+    }
 }
 
 #pragma mark - Private methods
 
 - (NSDictionary *)extractParamsFromUrl:(NSURL *)url {
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-
-    for (NSString *param in [[url query] componentsSeparatedByString:@"&"]) {
-        NSArray *element = [param componentsSeparatedByString:@"="];
-
-        if([element count] < 2) {
-            continue;
-        }
-
-        [params setObject:[element objectAtIndex:1] forKey:[element objectAtIndex:0]];
-    }
-
+    NSMutableDictionary *params = [[url uq_queryDictionary] mutableCopy];
     return params;
 }
 
@@ -198,7 +221,7 @@ typedef enum {
 }
 
 - (SEL)methodSelectorFromString:(NSString *)methodName withParams:(BOOL)withParams {
-    if (withParams == YES) {
+    if (withParams) {
         return NSSelectorFromString([NSString stringWithFormat:@"%@:", methodName]);
     }
 
@@ -215,8 +238,7 @@ typedef enum {
         return [self.delegate deserializeJSONString:jsonString];
     }
 
-    // TODO: iOS < 5.0 support!
-    return [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:nil];
+    return [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableLeaves error:nil];
 }
 
 - (NSString *)serializeObjectToJSONString:(id)objectToSerialize {
@@ -228,8 +250,7 @@ typedef enum {
         return [self.delegate serializeObjectToJSON:objectToSerialize];
     }
 
-    // TODO: iOS < 5.0 support!
-    NSData *json = [NSJSONSerialization dataWithJSONObject:objectToSerialize options:kNilOptions error:nil];
+    NSData *json = [NSJSONSerialization dataWithJSONObject:objectToSerialize options:NSJSONWritingPrettyPrinted error:nil];
     return [[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding];
 }
 
@@ -245,7 +266,7 @@ typedef enum {
             paramsObject = [self paramsObjectFromString:[paramsString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         }
 
-        SEL methodSelector = [self methodSelectorFromString:[requestParams objectForKey:kPontoMethodParamName] withParams:(paramsObject!=nil)?YES:NO];
+        SEL methodSelector = [self methodSelectorFromString:[requestParams objectForKey:kPontoMethodParamName] withParams:(paramsObject!=nil)];
 
         if (targetClassName && [targetClassName isSubclassOfClass:[PontoBaseHandler class]]) {
             id handlerObject;
@@ -271,7 +292,33 @@ typedef enum {
 
 - (void)dispatchResponse:(NSDictionary *)responseParams {
     if (responseParams && [responseParams objectForKey:kPontoCallbackIdParamName]) {
+        NSString *responseType = [responseParams objectForKey:@"type"];
+        NSString *callbackIdString = [responseParams objectForKey:kPontoCallbackIdParamName];
+        NSUInteger callbackId = (NSUInteger)[callbackIdString integerValue];
+        NSString *jsonString = [NSString stringWithFormat:@"[%@]", [responseParams objectForKey:@"params"]];
+        NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableLeaves error:nil];
+        id responseObject = [responseArray objectAtIndex:0];
 
+        NSDictionary *responseCallbackDict = [self.callbacksQueue objectAtIndex:callbackId];
+
+        if (responseCallbackDict != nil) {
+            PontoSuccessCallback successCallback = [responseCallbackDict objectForKey:kPontoSuccessCallbackBlockKey];
+            PontoErrorCallback errorCallback = [responseCallbackDict objectForKey:kPontoErrorCallbackBlockKey];
+
+            if (successCallback && (responseType == nil || [responseType isEqualToString:@"0"])) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    successCallback(responseObject);
+                });
+            }
+
+            if (errorCallback && (responseType != nil && [responseType isEqualToString:@"1"])) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    errorCallback(responseObject);
+                });
+            }
+        }
+
+        [self.callbacksQueue removeObjectAtIndex:callbackId];
     }
 }
 
