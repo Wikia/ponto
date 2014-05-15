@@ -171,9 +171,6 @@
 		 * @public
 		 *
 		 * @param {Object} scope The execution scope
-		 * @param {String} callbackId The id stored in the callbacks registry
-		 * @param {Number} responseType The type of response,
-		 * one of RESPONSE_COMPLETE or RESPONSE_ERROR
 		 * @param {ResponseParams} data An hash containing the parameters associated to the response
 		 */
 		function dispatchResponse(scope, data) {
@@ -245,10 +242,10 @@
 
 		/**
 		 * Ponto dispatcher constructor
-		 *
+			 *
 		 * @public
 		 *
-		 * @param {Object} scope The execution scope to bind to this instance
+		 * @param {Object} dispatchContext The execution scope to bind to this instance
 		 */
 		function PontoDispatcher(dispatchContext) {
 			this.context = dispatchContext;
