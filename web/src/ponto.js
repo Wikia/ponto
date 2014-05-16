@@ -81,28 +81,33 @@
 			 *
 			 * @type {Object}
 			 */
-				protocol = context.PontoProtocol || {
-				//the only other chance is for the native layer to register
-				//a custom protocol for communicating with the webview (e.g. iOS)
-				request: function (execContext, target, method, params, callbackId) {
-					if (execContext.location && execContext.location.href) {
-						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
-							'&method=' + encodeURIComponent(method) +
-							((params) ? '&params=' + encodeURIComponent(params) : '') +
-							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
-					} else {
-						throw "Context doesn't support User Agent location API";
+				protocol = (function () {
+					if (isIframe()) {
+						return new iFrameProtocol();
 					}
-				},
-				response: function (execContext, callbackId, params) {
-					if (execContext.location && execContext.location.href) {
-						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
-							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
-					} else {
-						throw "Context doesn't support User Agent location API";
-					}
-				}
-			},
+					return context.PontoProtocol || {
+						//the only other chance is for the native layer to register
+						//a custom protocol for communicating with the webview (e.g. iOS)
+						request: function (execContext, target, method, params, callbackId) {
+							if (execContext.location && execContext.location.href) {
+								execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
+									'&method=' + encodeURIComponent(method) +
+									((params) ? '&params=' + encodeURIComponent(params) : '') +
+									((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
+							} else {
+								throw "Context doesn't support User Agent location API";
+							}
+						},
+						response: function (execContext, callbackId, params) {
+							if (execContext.location && execContext.location.href) {
+								execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
+									((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
+							} else {
+								throw "Context doesn't support User Agent location API";
+							}
+						}
+					};
+			})(),
 
 			exports;
 
@@ -121,6 +126,34 @@
 			throw "The getInstance method needs to be overridden in PontoBaseHandler subclasses";
 		};
 
+		function iFrameProtocol() {
+			this.request =  function (execContext, target, method, params, callbackId) {
+				if (typeof execContext.postMessage === 'function') {
+					execContext.top.postMessage(JSON.stringify({
+						type: 'request',
+						target: target,
+						method: method,
+						params: params,
+						callbackId: callbackId
+					}), 'http://jsbin.com');
+				} else {
+					throw "Context doesn't support HTML Post Message";
+				}
+			},
+
+			this.response =  function (execContext, callbackId, params) {
+				if (typeof execContext.postMessage === 'function') {
+					execContext.postMessage({
+						type: 'response',
+						params: params,
+						callbackId: callbackId
+					});
+				} else {
+					throw "Context doesn't support HTML Post Message";
+				}
+			}
+		}
+
 		/**
 		 * PontoBaseHandler extension pattern
 		 *
@@ -137,6 +170,10 @@
 			constructor.getInstance = PontoBaseHandler.getInstance;
 			constructor.prototype = new PontoBaseHandler();
 		};
+
+		function isIframe () {
+			return context !== context.parent;
+		}
 
 		/**
 		 * Dispatches a request sent by the native layer
@@ -242,7 +279,7 @@
 
 		/**
 		 * Ponto dispatcher constructor
-			 *
+		 *
 		 * @public
 		 *
 		 * @param {Object} dispatchContext The execution scope to bind to this instance
