@@ -30,19 +30,6 @@
 	function ponto() {
 		var
 			/**
-			 * [Constant] Name of the URI protocol optionally
-			 * registered by the native layer
-			 *
-			 * @private
-			 *
-			 * @type {String}
-			 *
-			 * @see  protocol.request
-			 * @see  protocol.response
-			 */
-				PROTOCOL_NAME = 'ponto',
-
-			/**
 			 * [Constant] Represents a completed request
 			 *
 			 * @private
@@ -75,74 +62,66 @@
 
 			/**
 			 * Protocol helper
-			 * registered by native platforms that
-			 * have the capability to do so (e.g. Android) or
-			 * implemented directly for those that don't (e.g iOS)
+			 * Used to transfer serialized data between windows
 			 *
 			 * @type {Object}
 			 */
-				protocol ,
+
+				protocol,
+
+			/**
+			 * Context in the iFrame, containing Ponto
+			 *
+			 * @type {Window | object}
+			 */
+				targetContext,
 
 				exports;
 
-		protocol = (function () {
-			return (isIframe()) ? new IFrameProtocol() : context.PontoProtocol || {
-				//the only other chance is for the native layer to register
-				//a custom protocol for communicating with the webview (e.g. iOS)
-				request: function (execContext, target, method, params, callbackId) {
-					if (execContext.location && execContext.location.href) {
-						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
-							'&method=' + encodeURIComponent(method) +
-							((params) ? '&params=' + encodeURIComponent(params) : '') +
-							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
-					} else {
-						throw "Context doesn't support User Agent location API";
-					}
-				},
-				response: function (execContext, callbackId, params) {
-					if (execContext.location && execContext.location.href) {
-						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
-							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
-					} else {
-						throw "Context doesn't support User Agent location API";
-					}
-				}
-			};
-		})();
 
 		/**
-		 * @desc Distinguishes iframe from webview
-		 * @returns {boolean}
+		 * Produces a protocol helper for transferring serialized data between windows
+		 * @constructor
 		 */
-		function isIframe () {
-			return context.top && context !== context.top;
-		}
-
-		function IFrameProtocol () {
+		function IFrameParentProtocol() {
 			this.request = function (execContext, target, method, params, callbackId) {
-				if (execContext.top.Ponto) {
-					execContext.top.Ponto.request(JSON.stringify({
+				if (targetContext.Ponto) {
+					targetContext.Ponto.request(JSON.stringify({
 						target: target,
 						method: method,
 						params: params,
 						callbackId: callbackId
 					}));
 				} else {
-					throw new Error('No Ponto library detected in a parent context');
+					throw new Error('No Ponto library detected in an iframe');
 				}
 			};
 
 			this.response = function (execContext, callbackId, result) {
-				if (execContext.top.Ponto) {
-					execContext.top.Ponto.response(JSON.stringify({
+				if (targetContext.Ponto) {
+					targetContext.Ponto.response(JSON.stringify({
 						type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
 						params: result,
 						callbackId: callbackId
 					}));
 				} else {
-					throw new Error('No Ponto library detected in a parent context');
+					throw new Error('No Ponto library detected in an iframe');
 				}
 			};
+		}
+
+		protocol = new IFrameParentProtocol();
+
+		/**
+		 * Sets the context to communicate with
+		 * @param {HTMLElement} iframe
+		 */
+		function setTarget (iframe) {
+			if (iframe && iframe.tagName === 'IFRAME') {
+				targetContext = iframe.contentWindow;
+			} else {
+				throw new Error('You need to provide a valid HTML iframe element');
+			}
 		}
 
 		/**
@@ -178,13 +157,13 @@
 		};
 
 		/**
-		 * Dispatches a request sent by the native layer
+		 * Dispatches a request sent by the iframe
 		 *
 		 * @private
 		 *
 		 * @param {Object} scope The execution scope
 		 * @param {Mixed} target A reference to a constructor or a static instance
-		 * @param {RequestParams} data An hash containing the parameters associated to the request
+		 * @param {RequestParams} data A hash containing the parameters associated to the request
 		 */
 		function dispatchRequest(scope, target, data) {
 			var instance,
@@ -205,12 +184,11 @@
 		}
 
 		/**
-		 * Function called by the native layer when answering a request
+		 * Function called by the iframe when answering a request
 		 *
 		 * @public
 		 *
-		 * @param {Object} scope The execution scope
-		 * @param {ResponseParams} data An hash containing the parameters associated to the response
+		 * @param {ResponseParams} data A hash containing the parameters associated to the response
 		 */
 		function dispatchResponse(data) {
 			var
@@ -244,7 +222,7 @@
 		 * RequestParams constructor
 		 *
 		 * Extracts and normalizes the parameters out of a JSON-encoded string
-		 * passed in by a request from the native context
+		 * passed in by a request from the iframe
 		 *
 		 * @private
 		 *
@@ -264,7 +242,7 @@
 		 * ResponseParams constructor
 		 *
 		 * Extracts and normalizes the parameters out of a JSON-encoded string
-		 * passed in by a response from the native context
+		 * passed in by a response from the iframe
 		 *
 		 * @private
 		 *
@@ -302,8 +280,8 @@
 		};
 
 		/**
-		 * Handle a request from the native layer,
-		 * this is supposed to be called directly from native code
+		 * Handle a request from the iframe,
+		 * this is supposed to be called directly from the iframe
 		 *
 		 * @public
 		 *
@@ -325,8 +303,8 @@
 		};
 
 		/**
-		 * Handle a response from the native layer,
-		 * this is supposed to be called directly from native code
+		 * Handle a response from the iframe,
+		 * this is supposed to be called directly from the iframe
 		 *
 		 * @public
 		 *
@@ -339,11 +317,11 @@
 		};
 
 		/**
-		 * Makes a request to the native layer
+		 * Makes a request to the iframe
 		 *
 		 * @public
 		 *
-		 * @param {String} target The target native class
+		 * @param {String} target The target scope in iframe
 		 * @param {String} method The method to call
 		 * @param {Object} params [OPTIONAL] An hash contaning the parameters to pass to the method
 		 * @param {Function} completeCallback [OPTIONAL] The callback to invoke on completion
@@ -368,6 +346,7 @@
 		exports.RESPONSE_ERROR = RESPONSE_ERROR;
 		exports.PontoDispatcher = PontoDispatcher;
 		exports.PontoBaseHandler = PontoBaseHandler;
+		exports.setTarget = setTarget;
 
 		return exports;
 	}
@@ -384,6 +363,6 @@
 	//to allow easy usage in other AMD modules
 	if (amd) {
 		amd = true;
-		define('ponto', context.Ponto);
+		define('Ponto', context.Ponto);
 	}
 }(this));
