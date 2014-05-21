@@ -91,7 +91,7 @@
 		function IFrameParentProtocol() {
 			this.request = function (execContext, target, method, params, callbackId) {
 				if (targetContext.Ponto) {
-					execContext.Ponto.request(JSON.stringify({
+					targetContext.Ponto.request(JSON.stringify({
 						target: target,
 						method: method,
 						params: params,
@@ -104,8 +104,8 @@
 
 			this.response = function (execContext, callbackId, result) {
 				if (targetContext.Ponto) {
-					execContext.Ponto.response(JSON.stringify({
-						type: result.type,
+					targetContext.Ponto.response(JSON.stringify({
+						type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
 						params: result,
 						callbackId: callbackId
 					}));

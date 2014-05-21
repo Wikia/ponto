@@ -121,7 +121,7 @@
 		function IFrameProtocol () {
 			this.request = function (execContext, target, method, params, callbackId) {
 				if (execContext.top.Ponto) {
-					execContext.Ponto.request(JSON.stringify({
+					execContext.top.Ponto.request(JSON.stringify({
 						target: target,
 						method: method,
 						params: params,
@@ -134,7 +134,7 @@
 
 			this.response = function (execContext, callbackId, result) {
 				if (execContext.top.Ponto) {
-					execContext.Ponto.response(JSON.stringify({
+					execContext.top.Ponto.response(JSON.stringify({
 						type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
 						params: result,
 						callbackId: callbackId
