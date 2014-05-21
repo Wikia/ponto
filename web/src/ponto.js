@@ -81,35 +81,35 @@
 			 *
 			 * @type {Object}
 			 */
-				protocol = (function () {
-					if (isIframe()) {
-						return new iFrameProtocol();
-					}
-					return context.PontoProtocol || {
-						//the only other chance is for the native layer to register
-						//a custom protocol for communicating with the webview (e.g. iOS)
-						request: function (execContext, target, method, params, callbackId) {
-							if (execContext.location && execContext.location.href) {
-								execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
-									'&method=' + encodeURIComponent(method) +
-									((params) ? '&params=' + encodeURIComponent(params) : '') +
-									((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
-							} else {
-								throw "Context doesn't support User Agent location API";
-							}
-						},
-						response: function (execContext, callbackId, params) {
-							if (execContext.location && execContext.location.href) {
-								execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
-									((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
-							} else {
-								throw "Context doesn't support User Agent location API";
-							}
-						}
-					};
-			})(),
+
+				protocol ,
 
 			exports;
+
+			protocol = (function () {
+				return (isIframe()) ? new IFrameProtocol() : context.PontoProtocol || {
+					//the only other chance is for the native layer to register
+					//a custom protocol for communicating with the webview (e.g. iOS)
+					request: function (execContext, target, method, params, callbackId) {
+						if (execContext.location && execContext.location.href) {
+							execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
+								'&method=' + encodeURIComponent(method) +
+								((params) ? '&params=' + encodeURIComponent(params) : '') +
+								((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
+						} else {
+							throw "Context doesn't support User Agent location API";
+						}
+					},
+					response: function (execContext, callbackId, params) {
+						if (execContext.location && execContext.location.href) {
+							execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
+								((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
+						} else {
+							throw "Context doesn't support User Agent location API";
+						}
+					}
+				};
+			})();
 
 		/**
 		 * Request handler base class constructor
@@ -126,32 +126,33 @@
 			throw "The getInstance method needs to be overridden in PontoBaseHandler subclasses";
 		};
 
-		function iFrameProtocol() {
-			this.request =  function (execContext, target, method, params, callbackId) {
-				if (typeof execContext.postMessage === 'function') {
+		function IFrameProtocol() {
+			this.request = function (execContext, target, method, params, callbackId) {
+				if (typeof execContext.top.postMessage === 'function') {
 					execContext.top.postMessage(JSON.stringify({
 						type: 'request',
 						target: target,
 						method: method,
 						params: params,
 						callbackId: callbackId
-					}), 'http://jsbin.com');
+					}), execContext.top.location.origin);
 				} else {
 					throw "Context doesn't support HTML Post Message";
 				}
-			},
+			};
 
-			this.response =  function (execContext, callbackId, params) {
+			this.response = function (execContext, callbackId, params) {
 				if (typeof execContext.postMessage === 'function') {
+					debugger;
 					execContext.postMessage({
 						type: 'response',
 						params: params,
 						callbackId: callbackId
-					});
+					}, execContext.top.location.origin);
 				} else {
 					throw "Context doesn't support HTML Post Message";
 				}
-			}
+			};
 		}
 
 		/**
@@ -172,7 +173,7 @@
 		};
 
 		function isIframe () {
-			return context !== context.parent;
+			return context !== context.top;
 		}
 
 		/**
@@ -216,6 +217,8 @@
 				cbGroup = callbacks[callbackId],
 				callback,
 				responseType;
+
+			debugger;
 
 			if (cbGroup) {
 				responseType = data.type;
@@ -333,7 +336,6 @@
 		 */
 		PontoDispatcher.prototype.response = function (data) {
 			var params = new ResponseParams(data);
-
 			dispatchResponse(this.context, params);
 		};
 
