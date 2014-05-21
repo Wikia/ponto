@@ -30,19 +30,6 @@
 	function ponto() {
 		var
 			/**
-			 * [Constant] Name of the URI protocol optionally
-			 * registered by the native layer
-			 *
-			 * @private
-			 *
-			 * @type {String}
-			 *
-			 * @see  protocol.request
-			 * @see  protocol.response
-			 */
-				PROTOCOL_NAME = 'ponto',
-
-			/**
 			 * [Constant] Represents a completed request
 			 *
 			 * @private
@@ -75,19 +62,27 @@
 
 			/**
 			 * Protocol helper
-			 * registered by native platforms that
-			 * have the capability to do so (e.g. Android) or
-			 * implemented directly for those that don't (e.g iOS)
+			 * Used to transfer serialized data between windows
 			 *
 			 * @type {Object}
 			 */
 
 				protocol,
 
+			/**
+			 * Context in the iFrame, containing Ponto
+			 *
+			 * @type {Window | object}
+			 */
 				targetContext,
 
 				exports;
 
+
+		/**
+		 * Produces a protocol helper for transferring serialized data between windows
+		 * @constructor
+		 */
 		function IFrameParentProtocol() {
 			this.request = function (execContext, target, method, params, callbackId) {
 				if (targetContext.Ponto) {
@@ -117,6 +112,10 @@
 
 		protocol = new IFrameParentProtocol();
 
+		/**
+		 * Sets the context to communicate with
+		 * @param {HTMLElement} iframe
+		 */
 		function setTarget (iframe) {
 			if (iframe && iframe.tagName === 'IFRAME') {
 				targetContext = iframe.contentWindow;
@@ -158,13 +157,13 @@
 		};
 
 		/**
-		 * Dispatches a request sent by the native layer
+		 * Dispatches a request sent by the iframe
 		 *
 		 * @private
 		 *
 		 * @param {Object} scope The execution scope
 		 * @param {Mixed} target A reference to a constructor or a static instance
-		 * @param {RequestParams} data An hash containing the parameters associated to the request
+		 * @param {RequestParams} data A hash containing the parameters associated to the request
 		 */
 		function dispatchRequest(scope, target, data) {
 			var instance,
@@ -185,14 +184,13 @@
 		}
 
 		/**
-		 * Function called by the native layer when answering a request
+		 * Function called by the iframe when answering a request
 		 *
 		 * @public
 		 *
-		 * @param {Object} scope The execution scope
-		 * @param {ResponseParams} data An hash containing the parameters associated to the response
+		 * @param {ResponseParams} data A hash containing the parameters associated to the response
 		 */
-		function dispatchResponse(scope, data) {
+		function dispatchResponse(data) {
 			var
 				callbackId = data.callbackId,
 				cbGroup = callbacks[callbackId],
@@ -224,7 +222,7 @@
 		 * RequestParams constructor
 		 *
 		 * Extracts and normalizes the parameters out of a JSON-encoded string
-		 * passed in by a request from the native context
+		 * passed in by a request from the iframe
 		 *
 		 * @private
 		 *
@@ -244,7 +242,7 @@
 		 * ResponseParams constructor
 		 *
 		 * Extracts and normalizes the parameters out of a JSON-encoded string
-		 * passed in by a response from the native context
+		 * passed in by a response from the iframe
 		 *
 		 * @private
 		 *
@@ -282,8 +280,8 @@
 		};
 
 		/**
-		 * Handle a request from the native layer,
-		 * this is supposed to be called directly from native code
+		 * Handle a request from the iframe,
+		 * this is supposed to be called directly from the iframe
 		 *
 		 * @public
 		 *
@@ -305,8 +303,8 @@
 		};
 
 		/**
-		 * Handle a response from the native layer,
-		 * this is supposed to be called directly from native code
+		 * Handle a response from the iframe,
+		 * this is supposed to be called directly from the iframe
 		 *
 		 * @public
 		 *
@@ -315,15 +313,15 @@
 		 */
 		PontoDispatcher.prototype.response = function (data) {
 			var params = new ResponseParams(data);
-			dispatchResponse(this.context, params);
+			dispatchResponse(params);
 		};
 
 		/**
-		 * Makes a request to the native layer
+		 * Makes a request to the iframe
 		 *
 		 * @public
 		 *
-		 * @param {String} target The target native class
+		 * @param {String} target The target scope in iframe
 		 * @param {String} method The method to call
 		 * @param {Object} params [OPTIONAL] An hash contaning the parameters to pass to the method
 		 * @param {Function} completeCallback [OPTIONAL] The callback to invoke on completion

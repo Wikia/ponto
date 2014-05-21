@@ -212,7 +212,7 @@
 		 * @param {Object} scope The execution scope
 		 * @param {ResponseParams} data An hash containing the parameters associated to the response
 		 */
-		function dispatchResponse(scope, data) {
+		function dispatchResponse(data) {
 			var
 				callbackId = data.callbackId,
 				cbGroup = callbacks[callbackId],
@@ -335,7 +335,7 @@
 		 */
 		PontoDispatcher.prototype.response = function (data) {
 			var params = new ResponseParams(data);
-			dispatchResponse(this.context, params);
+			dispatchResponse(params);
 		};
 
 		/**
