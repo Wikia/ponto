@@ -92,7 +92,6 @@
 			this.request = function (execContext, target, method, params, callbackId) {
 				if (targetContext.Ponto) {
 					execContext.Ponto.request(JSON.stringify({
-						type: 'request',
 						target: target,
 						method: method,
 						params: params,
@@ -103,13 +102,13 @@
 				}
 			};
 
-			this.response = function (execContext, callbackId, params) {
+			this.response = function (execContext, callbackId, result) {
 				if (targetContext.Ponto) {
-					execContext.Ponto.response({
-						type: 'response',
-						params: params,
+					execContext.Ponto.response(JSON.stringify({
+						type: result.type,
+						params: result,
 						callbackId: callbackId
-					});
+					}));
 				} else {
 					throw new Error('No Ponto library detected in an iframe');
 				}
@@ -121,28 +120,8 @@
 		function setTarget (iframe) {
 			if (iframe && iframe.tagName === 'IFRAME') {
 				targetContext = iframe.contentWindow;
-				context.addEventListener('message', onMessage, false);
 			} else {
 				throw new Error('You need to provide a valid HTML iframe element');
-			}
-		}
-
-		function onMessage (event) {
-			var data;
-			try {
-				data = JSON.parse(event.data);
-			} catch (e) {
-				data = {};
-			}
-			switch (data.type) {
-				case 'request':
-					dispatchRequest(context, data.target, data);
-					break;
-				case 'response':
-					dispatchResponse(context, data);
-					break;
-				default:
-					break;
 			}
 		}
 
@@ -386,6 +365,6 @@
 	//to allow easy usage in other AMD modules
 	if (amd) {
 		amd = true;
-		define('ponto', context.Ponto);
+		define('Ponto', context.Ponto);
 	}
 }(this));

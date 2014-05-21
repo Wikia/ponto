@@ -81,35 +81,69 @@
 			 *
 			 * @type {Object}
 			 */
-
 				protocol ,
 
-			exports;
+				exports;
 
-			protocol = (function () {
-				return (isIframe()) ? new IFrameProtocol() : context.PontoProtocol || {
-					//the only other chance is for the native layer to register
-					//a custom protocol for communicating with the webview (e.g. iOS)
-					request: function (execContext, target, method, params, callbackId) {
-						if (execContext.location && execContext.location.href) {
-							execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
-								'&method=' + encodeURIComponent(method) +
-								((params) ? '&params=' + encodeURIComponent(params) : '') +
-								((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
-						} else {
-							throw "Context doesn't support User Agent location API";
-						}
-					},
-					response: function (execContext, callbackId, params) {
-						if (execContext.location && execContext.location.href) {
-							execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
-								((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
-						} else {
-							throw "Context doesn't support User Agent location API";
-						}
+		protocol = (function () {
+			return (isIframe()) ? new IFrameProtocol() : context.PontoProtocol || {
+				//the only other chance is for the native layer to register
+				//a custom protocol for communicating with the webview (e.g. iOS)
+				request: function (execContext, target, method, params, callbackId) {
+					if (execContext.location && execContext.location.href) {
+						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
+							'&method=' + encodeURIComponent(method) +
+							((params) ? '&params=' + encodeURIComponent(params) : '') +
+							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
+					} else {
+						throw "Context doesn't support User Agent location API";
 					}
-				};
-			})();
+				},
+				response: function (execContext, callbackId, params) {
+					if (execContext.location && execContext.location.href) {
+						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
+							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
+					} else {
+						throw "Context doesn't support User Agent location API";
+					}
+				}
+			};
+		})();
+
+		/**
+		 * @desc Distinguishes iframe from webview
+		 * @returns {boolean}
+		 */
+		function isIframe () {
+			return context.top && context !== context.top;
+		}
+
+		function IFrameProtocol () {
+			this.request = function (execContext, target, method, params, callbackId) {
+				if (execContext.top.Ponto) {
+					execContext.Ponto.request(JSON.stringify({
+						target: target,
+						method: method,
+						params: params,
+						callbackId: callbackId
+					}));
+				} else {
+					throw new Error('No Ponto library detected in a parent context');
+				}
+			};
+
+			this.response = function (execContext, callbackId, result) {
+				if (execContext.top.Ponto) {
+					execContext.Ponto.response(JSON.stringify({
+						type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
+						params: result,
+						callbackId: callbackId
+					}));
+				} else {
+					throw new Error('No Ponto library detected in a parent context');
+				}
+			};
+		}
 
 		/**
 		 * Request handler base class constructor
@@ -125,35 +159,6 @@
 		PontoBaseHandler.getInstance = function () {
 			throw "The getInstance method needs to be overridden in PontoBaseHandler subclasses";
 		};
-
-		function IFrameProtocol() {
-			this.request = function (execContext, target, method, params, callbackId) {
-				if (typeof execContext.top.postMessage === 'function') {
-					execContext.top.postMessage(JSON.stringify({
-						type: 'request',
-						target: target,
-						method: method,
-						params: params,
-						callbackId: callbackId
-					}), execContext.top.location.origin);
-				} else {
-					throw "Context doesn't support HTML Post Message";
-				}
-			};
-
-			this.response = function (execContext, callbackId, params) {
-				if (typeof execContext.postMessage === 'function') {
-					debugger;
-					execContext.postMessage({
-						type: 'response',
-						params: params,
-						callbackId: callbackId
-					}, execContext.top.location.origin);
-				} else {
-					throw "Context doesn't support HTML Post Message";
-				}
-			};
-		}
 
 		/**
 		 * PontoBaseHandler extension pattern
@@ -171,10 +176,6 @@
 			constructor.getInstance = PontoBaseHandler.getInstance;
 			constructor.prototype = new PontoBaseHandler();
 		};
-
-		function isIframe () {
-			return context !== context.top;
-		}
 
 		/**
 		 * Dispatches a request sent by the native layer
@@ -217,8 +218,6 @@
 				cbGroup = callbacks[callbackId],
 				callback,
 				responseType;
-
-			debugger;
 
 			if (cbGroup) {
 				responseType = data.type;
