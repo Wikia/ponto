@@ -91,7 +91,7 @@
 
 				exports;
 
-		protocol = (function () {
+		function nativeProtocol () {
 			return context.PontoProtocol || {
 				//the only other chance is for the native layer to register
 				//a custom protocol for communicating with the webview (e.g. iOS)
@@ -102,7 +102,7 @@
 							((params) ? '&params=' + encodeURIComponent(params) : '') +
 							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 					} else {
-						throw "Context doesn't support User Agent location API";
+						throw new Error('Context doesn\'t support User Agent location API');
 					}
 				},
 				response: function (execContext, callbackId, params) {
@@ -110,18 +110,42 @@
 						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
 							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
 					} else {
-						throw "Context doesn't support User Agent location API";
+						throw new Error('Context doesn\'t support User Agent location API');
 					}
 				}
 			};
-		})();
+		}
 
-		/**
-		 * @desc Distinguishes iframe from webview
-		 * @returns {boolean}
-		 */
-		function isIframe () {
-			return context.top && context !== context.top;
+		protocol = nativeProtocol();
+
+		function iframeProtocol () {
+			return {
+				request: function (execContext, target, method, params, callbackId) {
+					if (targetWindow.postMessage) {
+						targetWindow.postMessage(JSON.stringify({
+							action: PROTOCOL_NAME + '.request',
+							target: target,
+							method: method,
+							params: params,
+							callbackId: callbackId
+						}), targetWindow.location.origin);
+					} else {
+						throw new Error('Target context does not support postMessage');
+					}
+				},
+				response: function (execContext, callbackId, result) {
+					if (targetWindow.postMessage) {
+						targetWindow.postMessage(JSON.stringify({
+							action: PROTOCOL_NAME + '.response',
+							type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
+							params: result,
+							callbackId: callbackId
+						}), targetWindow.location.origin);
+					} else {
+						throw new Error('Target context does not support postMessage');
+					}
+				}
+			};
 		}
 
 		function onMessage(event){
@@ -132,34 +156,6 @@
 			}
 		}
 
-		function IframeProtocol () {
-			this.request = function (execContext, target, method, params, callbackId) {
-				if (targetWindow.postMessage) {
-					targetWindow.postMessage(JSON.stringify({
-						action: PROTOCOL_NAME + '.request',
-						target: target,
-						method: method,
-						params: params,
-						callbackId: callbackId
-					}), targetWindow.location.origin);
-				} else {
-					throw new Error('Target context does not support postMessage');
-				}
-			};
-
-			this.response = function (execContext, callbackId, result) {
-				if (targetWindow.postMessage) {
-					targetWindow.postMessage(JSON.stringify({
-						action: PROTOCOL_NAME + '.response',
-						type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
-						params: result,
-						callbackId: callbackId
-					}), targetWindow.location.origin);
-				} else {
-					throw new Error('Target context does not support postMessage');
-				}
-			};
-		}
 
 		/**
 		 * Request handler base class constructor
@@ -173,7 +169,7 @@
 		 * PontoBaseHandler needs to implement this static method
 		 */
 		PontoBaseHandler.getInstance = function () {
-			throw "The getInstance method needs to be overridden in PontoBaseHandler subclasses";
+			throw new Error('The getInstance method needs to be overridden in PontoBaseHandler subclasses');
 		};
 
 		/**
@@ -273,9 +269,10 @@
 					}
 					break;
 				default:
+					protocol = nativeProtocol();
 					return;
 			}
-			protocol = new IframeProtocol();
+			protocol = iframeProtocol();
 			context.addEventListener('message', onMessage, false);
 		}
 
