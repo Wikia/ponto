@@ -132,7 +132,7 @@
 					if (execContext.location && execContext.location.href) {
 						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
 							'&method=' + encodeURIComponent(method) +
-							((params) ? '&params=' + encodeURIComponent(params) : '') +
+							((Object.keys(params).length) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '') +
 							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 					} else {
 						throw new Error('Context doesn\'t support User Agent location API');
@@ -157,25 +157,27 @@
 			return {
 				request: function (execContext, target, method, params, callbackId) {
 					if (targetWindow.postMessage) {
-						targetWindow.postMessage(JSON.stringify({
-							action: PROTOCOL_NAME + '.request',
+						targetWindow.postMessage({
+							protocol: PROTOCOL_NAME,
+							action: 'request',
 							target: target,
 							method: method,
 							params: params,
 							callbackId: callbackId
-						}), targetWindow.location.origin);
+						}, targetWindow.location.origin);
 					} else {
 						throw new Error('Target context does not support postMessage');
 					}
 				},
 				response: function (execContext, callbackId, result) {
 					if (targetWindow.postMessage) {
-						targetWindow.postMessage(JSON.stringify({
-							action: PROTOCOL_NAME + '.response',
+						targetWindow.postMessage({
+							protocol: PROTOCOL_NAME,
+							action: 'response',
 							type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
 							params: result,
 							callbackId: callbackId
-						}), targetWindow.location.origin);
+						}, targetWindow.location.origin);
 					} else {
 						throw new Error('Target context does not support postMessage');
 					}
@@ -188,10 +190,8 @@
 		 * @param {Event} event
 		 */
 		function onMessage(event){
-			if (event.data.match(PROTOCOL_NAME + '.request')) {
-				dispatcher.request(event.data);
-			} else if (event.data.match(PROTOCOL_NAME + '.response')) {
-				dispatcher.response(event.data);
+			if (event.data && event.data.protocol === PROTOCOL_NAME) {
+				dispatcher[event.data.action](event.data);
 			}
 		}
 
@@ -333,7 +333,7 @@
 		 * for a request to Ponto
 		 */
 		function RequestParams(data) {
-			var hash = JSON.parse(data);
+			var hash = typeof data === 'string' ? JSON.parse(data) : data;
 
 			this.target = hash.target;
 			this.method = hash.method;
@@ -353,7 +353,7 @@
 		 * for a response from Ponto
 		 */
 		function ResponseParams(data) {
-			var hash = JSON.parse(data);
+			var hash = typeof data === 'string' ? JSON.parse(data) : data;
 
 			this.type = parseInt(hash.type, 10);
 			this.callbackId = hash.callbackId;
@@ -441,7 +441,7 @@
 				};
 			}
 
-			protocol.request(this.context, target, method, JSON.stringify(params), callbackId);
+			protocol.request(this.context, target, method, params, callbackId);
 		};
 
 		exports = dispatcher;
