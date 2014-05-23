@@ -64,10 +64,39 @@
 			 */
 				RESPONSE_ERROR = 1,
 
+			/**
+			 * [Constant] Indicates that the target is a native platform
+			 *
+			 * @type {Number}
+			 */
 				TARGET_NATIVE = 0,
+
+			/**
+			 * [Constant] Indicates that the target is an iframe
+			 *
+			 * @type {Number}
+			 */
 				TARGET_IFRAME = 1,
+
+			/**
+			 * [Constant] Indicates that the target is an iframe parent window
+			 *
+			 * @type {Number}
+			 */
 				TARGET_IFRAME_PARENT = 2,
+
+			/**
+			 * Window to communicate with (if iframe transport is overriden)
+			 *
+			 * @type {Window}
+			 */
 				targetWindow,
+
+			/**
+			 * Request / Response dispatcher
+			 *
+			 * @type {PontoDispatcher}
+			 */
 				dispatcher  = new PontoDispatcher(context),
 
 			/**
@@ -87,10 +116,14 @@
 			 *
 			 * @type {Object}
 			 */
-				protocol,
+				protocol = nativeProtocol(),
 
 				exports;
 
+		/**
+		 * Returns a valid communication protocol for native platform
+		 * @returns {*|{request: request, response: response}}
+		 */
 		function nativeProtocol () {
 			return context.PontoProtocol || {
 				//the only other chance is for the native layer to register
@@ -116,8 +149,10 @@
 			};
 		}
 
-		protocol = nativeProtocol();
-
+		/**
+		 * Returns a valid communication protocol for the iframe
+		 * @returns {{request: request, response: response}}
+		 */
 		function iframeProtocol () {
 			return {
 				request: function (execContext, target, method, params, callbackId) {
@@ -148,6 +183,10 @@
 			};
 		}
 
+		/**
+		 * 'message' Event handler
+		 * @param {Event} event
+		 */
 		function onMessage(event){
 			if (event.data.match(PROTOCOL_NAME + '.request')) {
 				dispatcher.request(event.data);
@@ -252,6 +291,12 @@
 			}
 		}
 
+		/**
+		 * Overrides the protocol target (default: native)
+		 * @param {Number} _target
+		 * @param {Number | undefined}_targetWindow
+		 * provide if target is an iframe
+		 */
 		function setTarget(_target, _targetWindow) {
 			switch (_target) {
 				case TARGET_IFRAME:
