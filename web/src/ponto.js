@@ -64,6 +64,12 @@
 			 */
 				RESPONSE_ERROR = 1,
 
+				TARGET_NATIVE = 0,
+				TARGET_IFRAME = 1,
+				TARGET_IFRAME_PARENT = 2,
+				targetWindow,
+				dispatcher  = new PontoDispatcher(context),
+
 			/**
 			 * Registry for complete/error callbacks
 			 *
@@ -81,12 +87,12 @@
 			 *
 			 * @type {Object}
 			 */
-				protocol ,
+				protocol,
 
 				exports;
 
 		protocol = (function () {
-			return (isIframe()) ? new IFrameProtocol() : context.PontoProtocol || {
+			return context.PontoProtocol || {
 				//the only other chance is for the native layer to register
 				//a custom protocol for communicating with the webview (e.g. iOS)
 				request: function (execContext, target, method, params, callbackId) {
@@ -118,29 +124,39 @@
 			return context.top && context !== context.top;
 		}
 
-		function IFrameProtocol () {
+		function onMessage(event){
+			if (event.data.match(PROTOCOL_NAME + '.request')) {
+				dispatcher.request(event.data);
+			} else if (event.data.match(PROTOCOL_NAME + '.response')) {
+				dispatcher.response(event.data);
+			}
+		}
+
+		function IframeProtocol () {
 			this.request = function (execContext, target, method, params, callbackId) {
-				if (execContext.top.Ponto) {
-					execContext.top.Ponto.request(JSON.stringify({
+				if (targetWindow.postMessage) {
+					targetWindow.postMessage(JSON.stringify({
+						action: PROTOCOL_NAME + '.request',
 						target: target,
 						method: method,
 						params: params,
 						callbackId: callbackId
-					}));
+					}), targetWindow.location.origin);
 				} else {
-					throw new Error('No Ponto library detected in a parent context');
+					throw new Error('Target context does not support postMessage');
 				}
 			};
 
 			this.response = function (execContext, callbackId, result) {
-				if (execContext.top.Ponto) {
-					execContext.top.Ponto.response(JSON.stringify({
+				if (targetWindow.postMessage) {
+					targetWindow.postMessage(JSON.stringify({
+						action: PROTOCOL_NAME + '.response',
 						type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
 						params: result,
 						callbackId: callbackId
-					}));
+					}), targetWindow.location.origin);
 				} else {
-					throw new Error('No Ponto library detected in a parent context');
+					throw new Error('Target context does not support postMessage');
 				}
 			};
 		}
@@ -238,6 +254,29 @@
 
 				delete callbacks[callbackId];
 			}
+		}
+
+		function setTarget(_target, _targetWindow) {
+			switch (_target) {
+				case TARGET_IFRAME:
+					if (_targetWindow.top && _targetWindow !== _targetWindow.top) {
+						targetWindow = _targetWindow;
+					} else {
+						throw new Error('Bad iframe content window provided.');
+					}
+					break;
+				case TARGET_IFRAME_PARENT:
+					if (context.top && context.top !== context) {
+						targetWindow = context.top;
+					} else {
+						throw new Error('No possible communication in this context.');
+					}
+					break;
+				default:
+					return;
+			}
+			protocol = new IframeProtocol();
+			context.addEventListener('message', onMessage, false);
 		}
 
 		/**
@@ -363,11 +402,15 @@
 			protocol.request(this.context, target, method, JSON.stringify(params), callbackId);
 		};
 
-		exports = new PontoDispatcher(context);
+		exports = dispatcher;
 		exports.RESPONSE_COMPLETE = RESPONSE_COMPLETE;
 		exports.RESPONSE_ERROR = RESPONSE_ERROR;
+		exports.TARGET_NATIVE = TARGET_NATIVE;
+		exports.TARGET_IFRAME = TARGET_IFRAME;
+		exports.TARGET_IFRAME_PARENT = TARGET_IFRAME_PARENT;
 		exports.PontoDispatcher = PontoDispatcher;
 		exports.PontoBaseHandler = PontoBaseHandler;
+		exports.setTarget = setTarget;
 
 		return exports;
 	}
