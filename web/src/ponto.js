@@ -155,7 +155,7 @@
 		 */
 		function iframeProtocol () {
 			return {
-				request: function (execContext, target, method, params, callbackId) {
+				request: function (execContext, target, method, params, callbackId, async) {
 					if (targetWindow.postMessage) {
 						targetWindow.postMessage({
 							protocol: PROTOCOL_NAME,
@@ -163,6 +163,7 @@
 							target: target,
 							method: method,
 							params: params,
+							async: async,
 							callbackId: callbackId
 						}, targetWindow.location.origin);
 					} else {
@@ -246,10 +247,14 @@
 
 				//unfortunately we need to instantiate before being able to
 				if (instance[data.method]) {
-					result = instance[data.method](data.params);
+					if (data.async) {
+						instance[data.method](data.params, data.callbackId);
+					} else {
+						result = instance[data.method](data.params);
 
-					if (data.callbackId && protocol && protocol.response) {
-						protocol.response(scope, data.callbackId, result);
+						if (data.callbackId && protocol && protocol.response) {
+							protocol.response(scope, data.callbackId, result);
+						}
 					}
 				}
 			}
@@ -315,10 +320,23 @@
 					break;
 				default:
 					protocol = nativeProtocol();
+					if (PontoDispatcher.prototype.respond) {
+						delete PontoDispatcher.prototype.respond;
+					}
 					return;
 			}
 			protocol = iframeProtocol();
+
 			context.addEventListener('message', onMessage, false);
+
+			/**
+			 * Enables manual trigger of the response when async operation needed
+			 * @param {Object} result response params, optionally with 'type' field
+			 * @param {Number} callbackId
+			 */
+			PontoDispatcher.prototype.respond = function (result, callbackId) {
+				protocol.response(this.context, callbackId, result);
+			};
 		}
 
 		/**
@@ -339,6 +357,7 @@
 			this.method = hash.method;
 			this.params = hash.params;
 			this.callbackId = hash.callbackId;
+			this.async = hash.async;
 		}
 
 		/**
@@ -429,8 +448,10 @@
 		 * @param {Object} params [OPTIONAL] An hash contaning the parameters to pass to the method
 		 * @param {Function} completeCallback [OPTIONAL] The callback to invoke on completion
 		 * @param {Function} errorCallback [OPTIONAL] The callback to invoke in case of error
+		 * @param {Bool} async Indicates of the other side will make async operation and respond
+		 * manually
 		 */
-		PontoDispatcher.prototype.invoke = function (target, method, params, completeCallback, errorCallback) {
+		PontoDispatcher.prototype.invoke = function (target, method, params, completeCallback, errorCallback, async) {
 			var callbackId;
 
 			if (typeof (completeCallback || errorCallback) === 'function') {
@@ -441,7 +462,7 @@
 				};
 			}
 
-			protocol.request(this.context, target, method, params, callbackId);
+			protocol.request(this.context, target, method, params, callbackId, async);
 		};
 
 		exports = dispatcher;
