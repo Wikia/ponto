@@ -1,4 +1,4 @@
-Ponto, WebView implementation
+Ponto, WebView implementation [![Code Climate](https://codeclimate.com/github/Wikia/ponto.png)](https://codeclimate.com/github/Wikia/ponto)
 =============================
 
 This is the root folder for the WebView (JavaScript) implementation.
