@@ -190,7 +190,7 @@
 		 * 'message' Event handler
 		 * @param {Event} event
 		 */
-		function onMessage(event){
+		function onMessage(event) {
 			if (event.data && event.data.protocol === PROTOCOL_NAME) {
 				dispatcher[event.data.action](event.data);
 			}
