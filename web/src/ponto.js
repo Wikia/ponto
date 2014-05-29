@@ -118,11 +118,14 @@
 			 */
 				protocol = nativeProtocol(),
 
+				targets = {},
+
 				exports;
 
 		/**
 		 * Returns a valid communication protocol for native platform
 		 * @returns {*|{request: request, response: response}}
+		 * Communication protocol methods for the native layer in an object
 		 */
 		function nativeProtocol () {
 			return context.PontoProtocol || {
@@ -135,7 +138,7 @@
 							((Object.keys(params).length) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '') +
 							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 					} else {
-						throw new Error('Context doesn\'t support User Agent location API');
+						locationError();
 					}
 				},
 				response: function (execContext, callbackId, params) {
@@ -143,7 +146,7 @@
 						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
 							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
 					} else {
-						throw new Error('Context doesn\'t support User Agent location API');
+						locationError();
 					}
 				}
 			};
@@ -152,6 +155,7 @@
 		/**
 		 * Returns a valid communication protocol for the iframe
 		 * @returns {{request: request, response: response}}
+		 * Communication protocol methods for the iframe
 		 */
 		function iframeProtocol () {
 			return {
@@ -167,7 +171,7 @@
 							callbackId: callbackId
 						}, targetWindow.location.origin);
 					} else {
-						throw new Error('Target context does not support postMessage');
+						postMessageError();
 					}
 				},
 				response: function (execContext, callbackId, result) {
@@ -180,19 +184,34 @@
 							callbackId: callbackId
 						}, targetWindow.location.origin);
 					} else {
-						throw new Error('Target context does not support postMessage');
+						postMessageError();
 					}
 				}
 			};
 		}
 
 		/**
+		 * Throws a post message error
+		 */
+		function postMessageError() {
+			throw new Error('Target context does not support postMessage');
+		}
+
+		/**
+		 * Throws a user agent location error
+		 */
+		function locationError() {
+			throw new Error('Context doesn\'t support User Agent location API');
+		}
+
+		/**
 		 * 'message' Event handler
 		 * @param {Event} event
 		 */
-		function onMessage(event) {
-			if (event.data && event.data.protocol === PROTOCOL_NAME) {
-				dispatcher[event.data.action](event.data);
+		function onMessage(event){
+			var data = event.data;
+			if (data && data.protocol === PROTOCOL_NAME) {
+				dispatcher[data.action](data);
 			}
 		}
 
@@ -297,36 +316,10 @@
 		}
 
 		/**
-		 * Overrides the protocol target (default: native)
-		 * @param {Number} _target
-		 * @param {Number | undefined}_targetWindow
-		 * provide if target is an iframe
+		 * Initialized iframe protocol to work
 		 */
-		function setTarget(_target, _targetWindow) {
-			switch (_target) {
-				case TARGET_IFRAME:
-					if (_targetWindow.top && _targetWindow !== _targetWindow.top) {
-						targetWindow = _targetWindow;
-					} else {
-						throw new Error('Bad iframe content window provided.');
-					}
-					break;
-				case TARGET_IFRAME_PARENT:
-					if (context.top && context.top !== context) {
-						targetWindow = context.top;
-					} else {
-						throw new Error('No possible communication in this context.');
-					}
-					break;
-				default:
-					protocol = nativeProtocol();
-					if (PontoDispatcher.prototype.respond) {
-						delete PontoDispatcher.prototype.respond;
-					}
-					return;
-			}
+		function setIframeProtocol () {
 			protocol = iframeProtocol();
-
 			context.addEventListener('message', onMessage, false);
 
 			/**
@@ -337,6 +330,63 @@
 			PontoDispatcher.prototype.respond = function (result, callbackId) {
 				protocol.response(this.context, callbackId, result);
 			};
+		}
+
+		/**
+		 * Sets iframe's content window as the protocol's target
+		 * @param {Window} _targetWindow
+		 */
+		targets[TARGET_IFRAME] = function (_targetWindow) {
+			if (_targetWindow.top && _targetWindow !== _targetWindow.top) {
+				targetWindow = _targetWindow;
+			} else {
+				throw new Error('Bad iframe content window provided.');
+			}
+			setIframeProtocol();
+		};
+
+		/**
+		 * Sets iframe's parent window as the protocol's target
+		 */
+		targets[TARGET_IFRAME_PARENT] = function () {
+			if (context.top && context.top !== context) {
+				targetWindow = context.top;
+			} else {
+				throw new Error('No possible communication in this context.');
+			}
+			setIframeProtocol();
+		};
+
+		/**
+		 * Sets the native layer as the protocol's target
+		 */
+		targets[TARGET_NATIVE] = function () {
+			protocol = nativeProtocol();
+			if (PontoDispatcher.prototype.respond) {
+				delete PontoDispatcher.prototype.respond;
+				context.removeEventListener('message', onMessage);
+			}
+		};
+
+		/**
+		 * Overrides the protocol target (default: native)
+		 * @param {Number} _target
+		 * @param {Number | undefined}_targetWindow
+		 * provide if target is an iframe
+		 */
+		function setTarget(_target, _targetWindow) {
+			if (targets[_target]) {
+				targets[_target](_targetWindow);
+			}
+		}
+
+		/**
+		 * Deserializes JSON string if needed
+		 * @param {Object | String} data
+		 * @returns {Object}
+		 */
+		function parse(data) {
+			return typeof data === 'string' ? JSON.parse(data) : data;
 		}
 
 		/**
@@ -351,7 +401,7 @@
 		 * for a request to Ponto
 		 */
 		function RequestParams(data) {
-			var hash = typeof data === 'string' ? JSON.parse(data) : data;
+			var hash = parse(data);
 
 			this.target = hash.target;
 			this.method = hash.method;
@@ -372,7 +422,7 @@
 		 * for a response from Ponto
 		 */
 		function ResponseParams(data) {
-			var hash = typeof data === 'string' ? JSON.parse(data) : data;
+			var hash = parse(data);
 
 			this.type = parseInt(hash.type, 10);
 			this.callbackId = hash.callbackId;
