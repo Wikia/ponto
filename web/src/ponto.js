@@ -138,7 +138,7 @@
 							((Object.keys(params).length) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '') +
 							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 					} else {
-						locationError();
+						throw new LocationException();
 					}
 				},
 				response: function (execContext, callbackId, params) {
@@ -146,7 +146,7 @@
 						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
 							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
 					} else {
-						locationError();
+						throw new LocationException();
 					}
 				}
 			};
@@ -171,7 +171,7 @@
 							callbackId: callbackId
 						}, targetWindow.location.origin);
 					} else {
-						postMessageError();
+						throw new PostMessageException();
 					}
 				},
 				response: function (execContext, callbackId, result) {
@@ -184,7 +184,7 @@
 							callbackId: callbackId
 						}, targetWindow.location.origin);
 					} else {
-						postMessageError();
+						throw new PostMessageException();
 					}
 				}
 			};
@@ -193,15 +193,15 @@
 		/**
 		 * Throws a post message error
 		 */
-		function postMessageError() {
-			throw new Error('Target context does not support postMessage');
+		function PostMessageException() {
+			this.message = 'Target context does not support postMessage';
 		}
 
 		/**
 		 * Throws a user agent location error
 		 */
-		function locationError() {
-			throw new Error('Context doesn\'t support User Agent location API');
+		function LocationException() {
+			this.message = 'Context doesn\'t support User Agent location API';
 		}
 
 		/**
@@ -324,6 +324,7 @@
 
 			/**
 			 * Enables manual trigger of the response when async operation needed
+			 * this can be explicitly called after the async operation is done
 			 * @param {Object} result response params, optionally with 'type' field
 			 * @param {Number} callbackId
 			 */
