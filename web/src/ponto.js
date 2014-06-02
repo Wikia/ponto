@@ -135,7 +135,7 @@
 					if (execContext.location && execContext.location.href) {
 						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
 							'&method=' + encodeURIComponent(method) +
-							((Object.keys(params).length) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '') +
+							((params) ? '&params=' + encodeURIComponent(params) : '') +
 							((callbackId) ? '&callbackId=' + encodeURIComponent(callbackId) : '');
 					} else {
 						throw new LocationException();
@@ -406,7 +406,7 @@
 
 			this.target = hash.target;
 			this.method = hash.method;
-			this.params = hash.params;
+			this.params = parse(hash.params);
 			this.callbackId = hash.callbackId;
 			this.async = hash.async;
 		}
@@ -513,7 +513,7 @@
 				};
 			}
 
-			protocol.request(this.context, target, method, params, callbackId, async);
+			protocol.request(this.context, target, method, JSON.stringify(params), callbackId, async);
 		};
 
 		exports = dispatcher;
