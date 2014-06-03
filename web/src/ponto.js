@@ -502,6 +502,7 @@
 		 * @param {Bool} async Indicates of the other side will make async operation and respond
 		 * manually
 		 */
+		//ToDo -> Make the method take object with params (too many params now)
 		PontoDispatcher.prototype.invoke = function (target, method, params, completeCallback, errorCallback, async) {
 			var callbackId;
 
