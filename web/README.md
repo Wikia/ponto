@@ -39,6 +39,8 @@ mWebView.loadUrl("javascript:Ponto.response(\"{\\\"type\\\": 0, \\\"params\\\":{
 
 Ponto.response accept a JSON-encoded string of an hash/dictionary containing the required data; *params* is optional and *type* is either 0 (completed successfully) or 1 (error occurred).
 
+Iframe communication
+--------
 Ponto can be used as a message transport protocol between a parent HTML window and an iframe - to enable this mode it is required to explicitly override the default, native protocol, uing setTarget method.
 
 For parent window, this method gets two params, target indicator and targeted iframe's content window.
