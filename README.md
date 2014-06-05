@@ -1,8 +1,12 @@
 Ponto
 =====
 
+<<<<<<< HEAD
 An iOS (Obj-C), Android (Java) and WebView (JavaScript) bridge for an easy
 exchange of data across web/native contextes, equiped with a transport between iframe and parent window.
+=======
+A simple, portable [wire protocol](http://en.wikipedia.org/wiki/Wire_protocol) to allow two-ways asynchronous communication between native iOS/Android contextes and the JavaScript context of Webviews.
+>>>>>>> master
 
 
 Rationale
