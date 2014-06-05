@@ -3,7 +3,7 @@ Ponto
 A simple, portable [wire protocol](http://en.wikipedia.org/wiki/Wire_protocol) to allow two-ways asynchronous communication between:
 
 * native iOS/Android contextes and the JavaScript context of Webviews
-* IFrame child and parent withing a Webview (or standard web browser)
+* IFrame child and parent within a Webview (or standard web browser)
 
 
 Rationale
