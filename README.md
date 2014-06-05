@@ -41,7 +41,7 @@ Credits
 This project exists thanks to the efforts of:
 
 * [Artur Klajnerok](https://github.com/ArturKlajnerok) (Android/Java)
-* [Bartosz "Bartek" Kowalski](https://github.com/bkoval) (IFrame transport)
+* [Bartłomiej  "Bartek" Kowalczyk](https://github.com/bkoval) (IFrame transport)
 * [Federico "Lox" Lucignano](https://github.com/federico-lox) (WebView/JavaScript)
 * [Grzegorz Nowicki](https://github.com/wikia-gregor) (iOS/Objective-C)
 * [Jakub Olek](https://github.com/hakubo) (planning support)
