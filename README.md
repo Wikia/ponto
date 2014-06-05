@@ -2,7 +2,7 @@ Ponto
 =====
 
 An iOS (Obj-C), Android (Java) and WebView (JavaScript) bridge for an easy
-exchange of data across web/native contextes.
+exchange of data across web/native contextes, equiped with a transport between iframe and parent window.
 
 
 Rationale
