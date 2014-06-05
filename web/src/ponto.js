@@ -95,7 +95,7 @@
 			/**
 			 * Origin url of the targeted window
 			 *
-			 * @type {Window}
+			 * @type {String}
 			 */
 				targetOrigin,
 
@@ -356,6 +356,7 @@
 		};
 
 		/**
+		 * @param {String} _targetOrigin - origin URL of the parent's document
 		 * Sets iframe's parent window as the protocol's target
 		 */
 		targets[TARGET_IFRAME_PARENT] = function (_targetOrigin) {
