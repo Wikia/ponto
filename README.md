@@ -1,6 +1,9 @@
 Ponto
 =====
-A simple, portable [wire protocol](http://en.wikipedia.org/wiki/Wire_protocol) to allow two-ways asynchronous communication between native iOS/Android contextes and the JavaScript context of Webviews, with a transport for communication between iframe and it's parent window.
+A simple, portable [wire protocol](http://en.wikipedia.org/wiki/Wire_protocol) to allow two-ways asynchronous communication between:
+
+* native iOS/Android contextes and the JavaScript context of Webviews
+* IFrame child and parent withing a Webview (or standard web browser)
 
 
 Rationale
@@ -38,6 +41,7 @@ Credits
 This project exists thanks to the efforts of:
 
 * [Artur Klajnerok](https://github.com/ArturKlajnerok) (Android/Java)
+* [Bartosz "Bartek" Kowalski](https://github.com/bkoval) (IFrame transport)
 * [Federico "Lox" Lucignano](https://github.com/federico-lox) (WebView/JavaScript)
 * [Grzegorz Nowicki](https://github.com/wikia-gregor) (iOS/Objective-C)
 * [Jakub Olek](https://github.com/hakubo) (planning support)
