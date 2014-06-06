@@ -45,11 +45,11 @@ Ponto can be used as a message transport protocol between a parent HTML window a
 
 For parent window, this method gets two params, target indicator and targeted iframe's content window.
 ```javascript
-Ponto.setTarget(Ponto.TARGET_IFRAME, document.querySelector('iframe').contentWindow);
+Ponto.setTarget(Ponto.TARGET_IFRAME, 'http://iframeOrigin.com', document.querySelector('iframe').contentWindow);
 ```
 In the iframe, it's just enough to set the target indicator as the iframe's parent.
 ```javascript
-Ponto.setTarget(Ponto.TARGET_IFRAME_PARENT);
+Ponto.setTarget(Ponto.TARGET_IFRAME_PARENT, 'http://parentWindowOrigin.com');
 ```
 
 Ponto by default performs a synchronous operation and immediately responds with a result. If there is a need to perform an asynchronous operation on the second javascript side, it needs to be indicated by using 'async' flag in the invoke method:
@@ -88,3 +88,4 @@ To prepare a valid Ponto scope, you need to perform following steps:
 		return new myObject();
 	};
 	```
+

@@ -93,6 +93,13 @@
 				targetWindow,
 
 			/**
+			 * Origin url of the targeted window
+			 *
+			 * @type {String}
+			 */
+				targetOrigin,
+
+			/**
 			 * Request / Response dispatcher
 			 *
 			 * @type {PontoDispatcher}
@@ -169,7 +176,7 @@
 							params: params,
 							async: async,
 							callbackId: callbackId
-						}, targetWindow.location.origin);
+						}, targetOrigin);
 					} else {
 						throw new PostMessageException();
 					}
@@ -182,7 +189,7 @@
 							type: (result && result.type) ? result.type : RESPONSE_COMPLETE,
 							params: result,
 							callbackId: callbackId
-						}, targetWindow.location.origin);
+						}, targetOrigin);
 					} else {
 						throw new PostMessageException();
 					}
@@ -335,11 +342,13 @@
 
 		/**
 		 * Sets iframe's content window as the protocol's target
+		 * @param {String} _targetOrigin - origin URL of the iframe's document
 		 * @param {Window} _targetWindow
 		 */
-		targets[TARGET_IFRAME] = function (_targetWindow) {
+		targets[TARGET_IFRAME] = function (_targetOrigin, _targetWindow) {
 			if (_targetWindow.top && _targetWindow !== _targetWindow.top) {
 				targetWindow = _targetWindow;
+				targetOrigin = _targetOrigin;
 			} else {
 				throw new Error('Bad iframe content window provided.');
 			}
@@ -347,11 +356,13 @@
 		};
 
 		/**
+		 * @param {String} _targetOrigin - origin URL of the parent's document
 		 * Sets iframe's parent window as the protocol's target
 		 */
-		targets[TARGET_IFRAME_PARENT] = function () {
+		targets[TARGET_IFRAME_PARENT] = function (_targetOrigin) {
 			if (context.top && context.top !== context) {
 				targetWindow = context.top;
+				targetOrigin = _targetOrigin;
 			} else {
 				throw new Error('No possible communication in this context.');
 			}
@@ -372,12 +383,13 @@
 		/**
 		 * Overrides the protocol target (default: native)
 		 * @param {Number} _target
+		 * @param {String | undefined} _targetOrigin - origin url of the targeted window
 		 * @param {Number | undefined}_targetWindow
 		 * provide if target is an iframe
 		 */
-		function setTarget(_target, _targetWindow) {
+		function setTarget(_target, _targetOrigin, _targetWindow) {
 			if (targets[_target]) {
-				targets[_target](_targetWindow);
+				targets[_target](_targetOrigin, _targetWindow);
 			}
 		}
 
