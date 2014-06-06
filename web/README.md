@@ -45,7 +45,7 @@ Ponto can be used as a message transport protocol between a parent HTML window a
 
 For parent window, this method gets two params, target indicator and targeted iframe's content window.
 ```javascript
-Ponto.setTarget(Ponto.TARGET_IFRAME, 'http://iframeOrigin.com',document.querySelector('iframe').contentWindow);
+Ponto.setTarget(Ponto.TARGET_IFRAME, 'http://iframeOrigin.com', document.querySelector('iframe').contentWindow);
 ```
 In the iframe, it's just enough to set the target indicator as the iframe's parent.
 ```javascript
