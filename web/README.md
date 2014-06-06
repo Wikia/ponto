@@ -69,22 +69,23 @@ function targetedFunction(params, callbackId) {
 To prepare a valid Ponto scope, you need to perform following steps:
 
 1. Create a constructor:
-```javascript
-function MyObject() {
-	this.myMethod = function() {
-		console.log('myMethod');
-	};
-}
-```
+	```javascript
+	function MyObject() {
+		this.myMethod = function() {
+			console.log('myMethod');
+		};
+	}
+	```
 
 2. Use Ponto's derive method on it:
-```javascript
-Ponto.PontoBaseHandler.derive(myObject);
-```
+	```javascript
+	Ponto.PontoBaseHandler.derive(myObject);
+	```
 
 3. Override the getInstance method prepared by Ponto:
-```javascript
-myObject.getInstance = function(){
-	return new myObject();
-};
-```
+	```javascript
+	myObject.getInstance = function(){
+		return new myObject();
+	};
+	```
+
