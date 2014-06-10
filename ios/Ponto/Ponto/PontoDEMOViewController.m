@@ -29,9 +29,9 @@
 
     // try to call JS method
     [self.pontoDispatcher invokeMethod:@"testMethod" onTarget:@"TODO_target" withParams:nil successBlock:^(id params) {
-
+        NSLog(@"success block with params: %@", params);
     } errorBlock:^(id params) {
-
+        NSLog(@"error block with params: %@", params);
     }];
 
 
