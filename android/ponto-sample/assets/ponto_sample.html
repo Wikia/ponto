@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>pontoDemo</title>
+
+    <!-- First load Ponto -->
+    <script src="ponto.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        function Alert() {
+            this.show = function(params) {
+                console.log('show');
+                console.log(params.text);
+                alert(params.text);
+            };
+        }
+
+        Ponto.PontoBaseHandler.derive(Alert);
+
+        Alert.getInstance = function(){
+            return new Alert();
+        };
+
+        function showToast() {
+            Ponto.invoke(
+                    "Messaging",
+                    "showToast",
+                    {body: "Hey! I'm using PONTO to handle native requests from webview!"},
+                    null,
+                    null);
+        }
+
+        function sendMessage() {
+            Ponto.invoke(
+                    "Messaging",
+                    "sendMessage",
+                    {subject: "Hey! Ponto is great!", to: "example@email.domain", body: "Hey! I'm using PONTO to handle native requests from webview!"},
+                    null,
+                    null);
+        }
+
+        function getSomeData() {
+            Ponto.invoke(
+                    "Messaging",
+                    "getSomeData",
+                    null,
+                    function (params) {
+                        console.log('success with params:');
+                        console.log(params);
+                        alert('success');
+                    },
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert('error');
+                    });
+        }
+
+        function testNotExistentMethodInHandler() {
+            Ponto.invoke(
+                    "Messaging",
+                    "someFakeMethod",
+                    null,
+                    null,
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert(params.message);
+                    });
+        }
+
+        function testNotExistentHandler() {
+            Ponto.invoke(
+                    "NotExistClass",
+                    "NotExistMethod",
+                    null,
+                    function (params) {
+                        alert('This is not possible!');
+                    },
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert(params.message);
+                    });
+        }
+
+        function testNotExistentHandlerWithoutSuccessHandler() {
+            Ponto.invoke(
+                    "NotExistClass",
+                    "NotExistMethod",
+                    null,
+                    null,
+                    function (params) {
+                        console.log('error with params:');
+                        console.log(params);
+                        alert(params.message);
+                    });
+        }
+    </script>
+</head>
+<body>
+    <h1>Ponto DEMO HTML</h1>
+    <ul>
+        <li>
+            <button onclick="showToast()">Display toast message.</button>
+        </li>
+
+        <li>
+            <button onclick="getSomeData()">Get some data from handler.</button>
+        </li>
+
+        <li>
+            <button onclick="testNotExistentMethodInHandler()">Test non existent method.</button>
+        </li>
+
+        <li>
+            <button onclick="testNotExistentHandler()">Test not existent handler.</button>
+        </li>
+
+        <li>
+            <button onclick="testNotExistentHandlerWithoutSuccessHandler()">Test not existent handler 2.</button>
+        </li>
+    </ul>
+</body>
+</html>
