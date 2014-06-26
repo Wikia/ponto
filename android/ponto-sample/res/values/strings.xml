@@ -3,6 +3,6 @@
 
     <string name="app_name">ponto-sample</string>
     <string name="hello_ponto">Hello ponto!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_alert">WebView Alert</string>
 
 </resources>
