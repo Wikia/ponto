@@ -31,11 +31,11 @@
                     null);
         }
 
-        function sendMessage() {
+        function sendEmail() {
             Ponto.invoke(
                     "Messaging",
-                    "sendMessage",
-                    {subject: "Hey! Ponto is great!", to: "example@email.domain", body: "Hey! I'm using PONTO to handle native requests from webview!"},
+                    "sendEmail",
+                    {email: "apps@wikia-inc.com", subject: "Hey! Ponto is great!", body: "Hey! I'm using PONTO to handle native requests from webview!"},
                     null,
                     null);
         }
@@ -103,7 +103,11 @@
     <h1>Ponto DEMO HTML</h1>
     <ul>
         <li>
-            <button onclick="showToast()">Display toast message.</button>
+            <button onclick="showToast()">Show toast message.</button>
+        </li>
+
+        <li>
+            <button onclick="sendEmail()">Send email message.</button>
         </li>
 
         <li>
@@ -115,11 +119,11 @@
         </li>
 
         <li>
-            <button onclick="testNotExistentHandler()">Test not existent handler.</button>
+            <button onclick="testNotExistentHandler()">Test not existent class.</button>
         </li>
 
         <li>
-            <button onclick="testNotExistentHandlerWithoutSuccessHandler()">Test not existent handler 2.</button>
+            <button onclick="testNotExistentHandlerWithoutSuccessHandler()">Test not existent class 2.</button>
         </li>
     </ul>
 </body>

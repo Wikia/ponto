@@ -125,7 +125,7 @@ public class Ponto {
                 Object object = constructor.newInstance(mWebView.getContext());
                 if (params != null && !params.equalsIgnoreCase(NULL_STRING)) {
                     Method method = cls.getDeclaredMethod(methodName, String.class);
-                    method.invoke (object, params);
+                    method.invoke(object, params);
                 } else {
                     Method method = cls.getDeclaredMethod(methodName);
                     method.invoke(object);
