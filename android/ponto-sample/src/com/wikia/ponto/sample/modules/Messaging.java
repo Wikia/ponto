@@ -56,6 +56,7 @@ public class Messaging {
     }
 
     public void getSomeData() {
+        Log.i("TAG", new Object() {}.getClass().getEnclosingMethod().getName());
     }
 
 }
