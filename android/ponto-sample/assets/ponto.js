@@ -139,7 +139,6 @@
 				//the only other chance is for the native layer to register
 				//a custom protocol for communicating with the webview (e.g. iOS)
 				request: function (execContext, target, method, params, callbackId) {
-					console.log('nativeProtocol.request '+callbackId);
 					if (execContext.location && execContext.location.href) {
 						execContext.location.href = PROTOCOL_NAME + ':///request?target=' + encodeURIComponent(target) +
 							'&method=' + encodeURIComponent(method) +
@@ -150,7 +149,6 @@
 					}
 				},
 				response: function (execContext, callbackId, params) {
-					console.log('nativeProtocol.response '+callbackId);
 					if (execContext.location && execContext.location.href) {
 						execContext.location.href = PROTOCOL_NAME + ':///response?callbackId=' + encodeURIComponent(callbackId) +
 							((params) ? '&params=' + encodeURIComponent(JSON.stringify(params)) : '');
@@ -520,17 +518,14 @@
 		PontoDispatcher.prototype.invoke = function (target, method, params, completeCallback, errorCallback, async) {
 			var callbackId;
 
-			console.log('PontoDispatcher.prototype.invoke 1: '+callbackId);
 			if (typeof (completeCallback || errorCallback) === 'function') {
 				callbackId = Math.random().toString().substr(2);
-				console.log('PontoDispatcher.prototype.invoke 2: '+callbackId);
 				callbacks[callbackId] = {
 					complete: completeCallback,
 					error: errorCallback
 				};
 			}
 
-			console.log('PontoDispatcher.prototype.invoke 3: '+callbackId);
 			protocol.request(this.context, target, method, JSON.stringify(params), callbackId, async);
 		};
 
