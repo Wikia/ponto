@@ -107,7 +107,7 @@ typedef enum {
 
     dispatch_barrier_sync(getPontoQueue(), ^{
         [self.callbacksQueue addObject:callbacksDict];
-        callbackId = [NSString stringWithFormat:@"%d", [self.callbacksQueue count] - 1];
+        callbackId = [NSString stringWithFormat:@"%lu", [self.callbacksQueue count] - 1];
     });
 
     NSDictionary *methodInvokeDict = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -358,14 +358,24 @@ typedef enum {
     method_getReturnType(instanceMethod, methodReturnTypeDescriptionBuffer, kPontoHandlerMethodReturnTypeStringBufferLenght);
 
     PontoHandlerMethodReturnType methodReturnType = [self convertEncodedTypeString:methodReturnTypeDescriptionBuffer];
+    
+    IMP imp = [handlerObject methodForSelector:methodSelector];
+    id (*funcWithArgument)(id, SEL, id) = NULL;
+    id (*funcWithoutArgument)(id, SEL) = NULL;
+    
+    if (params) {
+        funcWithArgument = (void *)imp;
+    } else {
+        funcWithoutArgument = (void *)imp;
+    }
 
     switch (methodReturnType) {
         case PontoHandlerMethodReturnTypeObject:
             if (params) {
-                response = [handlerObject performSelector:methodSelector withObject:params];
+                funcWithArgument(handlerObject, methodSelector, params);
             }
             else {
-                response = [handlerObject performSelector:methodSelector];
+                funcWithoutArgument(handlerObject, methodSelector);
             }
             break;
 
@@ -373,10 +383,10 @@ typedef enum {
         case PontoHandlerMethodReturnTypeVoid:
         default:
             if (params) {
-                [handlerObject performSelector:methodSelector withObject:params];
+                funcWithArgument(handlerObject, methodSelector, params);
             }
             else {
-                [handlerObject performSelector:methodSelector];
+                funcWithoutArgument(handlerObject, methodSelector);
             }
             break;
     }
