@@ -29,6 +29,7 @@
 @property (nonatomic, strong) NSString *handlerClassesPrefix;
 @property (nonatomic, weak) UIWebView *webView;
 @property (nonatomic, weak) id <PontoDispatcherDelegate>delegate;
+@property (nonatomic, weak) id webKitView;
 
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix;
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix andWebView:(UIWebView *)webView;

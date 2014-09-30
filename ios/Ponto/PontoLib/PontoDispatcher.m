@@ -23,7 +23,7 @@ NSString *const kPontoMethodInvokeJSString = @"Ponto.request(decodeURIComponent(
 NSString *const kPontoRequestUrlPath = @"/request";
 NSString *const kPontoResponseUrlPath = @"/response";
 
-NSInteger const kPontoHandlerMethodReturnTypeStringBufferLenght = 128;
+NSInteger const kPontoHandlerMethodReturnTypeStringBufferLength = 128;
 
 NSString *const kPontoSuccessCallbackBlockKey = @"successBlock";
 NSString *const kPontoErrorCallbackBlockKey = @"errorBlock";
@@ -52,6 +52,8 @@ typedef enum {
 @interface PontoDispatcher()
     @property (nonatomic, strong) NSMutableArray *callbacksQueue;
     @property (nonatomic, assign) id originalWebViewDelegate;
+
+    @property (nonatomic, assign, getter=isWebKitEnabled) BOOL webKitEnabled;
 @end
 
 
@@ -353,9 +355,9 @@ typedef enum {
 - (id)callMethod:(SEL)methodSelector inHandlerObject:(id)handlerObject withParams:(id)params {
     id response = nil;
 
-    char methodReturnTypeDescriptionBuffer[kPontoHandlerMethodReturnTypeStringBufferLenght];
+    char methodReturnTypeDescriptionBuffer[kPontoHandlerMethodReturnTypeStringBufferLength];
     Method instanceMethod = class_getInstanceMethod([handlerObject class], methodSelector);
-    method_getReturnType(instanceMethod, methodReturnTypeDescriptionBuffer, kPontoHandlerMethodReturnTypeStringBufferLenght);
+    method_getReturnType(instanceMethod, methodReturnTypeDescriptionBuffer, kPontoHandlerMethodReturnTypeStringBufferLength);
 
     PontoHandlerMethodReturnType methodReturnType = [self convertEncodedTypeString:methodReturnTypeDescriptionBuffer];
 
@@ -382,6 +384,16 @@ typedef enum {
     }
 
     return response;
+}
+
+#pragma mark - iOS8 WKWebKitView stuff
+
+- (void)setWebKitView:(id)webKitView {
+    Class webKitViewClass = NSClassFromString(@"WKWebView");
+    if (webKitViewClass && [webKitView isKindOfClass:webKitViewClass]) {
+        _webKitView = webKitView;
+        self.webKitEnabled = YES;
+    }
 }
 
 @end
