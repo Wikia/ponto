@@ -115,13 +115,12 @@ typedef enum {
         callbackId = [NSString stringWithFormat:@"%d", [self.callbacksQueue count] - 1];
     });
 
-    NSDictionary *methodInvokeDict = [[NSDictionary alloc] initWithObjectsAndKeys:
-            target, @"target",
-            methodName, @"method",
-            callbackId, @"callbackId",
-            params, @"params",
-            nil
-    ];
+    NSDictionary *methodInvokeDict = @{
+            @"target" : target,
+            @"method" : methodName,
+            @"callbackId" : callbackId,
+            @"params" : params
+    };
 
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:methodInvokeDict options:NSJSONWritingPrettyPrinted error:nil];
     NSString *methodInvokeString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -212,19 +211,20 @@ typedef enum {
 - (NSDictionary *)extractRequestParams:(NSURL *)requestUrl {
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[self extractParamsFromUrl:requestUrl]];
 
-    return [params dictionaryWithValuesForKeys:[NSArray arrayWithObjects:kPontoTargetParamName,
-                                                                         kPontoMethodParamName,
-                                                                         kPontoParamsParamName,
-                                                                         kPontoCallbackIdParamName,
-                                                                         nil]];
+    return [params dictionaryWithValuesForKeys:@[
+            kPontoTargetParamName,
+            kPontoMethodParamName,
+            kPontoParamsParamName,
+            kPontoCallbackIdParamName
+    ]];
 }
 
 - (NSDictionary *)extractResponseParams:(NSURL *)responseUrl {
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[self extractParamsFromUrl:responseUrl]];
 
-    return [params dictionaryWithValuesForKeys:[NSArray arrayWithObjects:kPontoCallbackIdParamName,
-                                                                         kPontoParamsParamName,
-                                                                         nil]];
+    return [params dictionaryWithValuesForKeys:@[kPontoCallbackIdParamName,
+            kPontoParamsParamName
+    ]];
 }
 
 // Add prefix to class name and return as Class
@@ -268,18 +268,18 @@ typedef enum {
 }
 
 - (void)dispatchRequest:(NSDictionary *)requestParams {
-    if (requestParams && [requestParams objectForKey:kPontoTargetParamName] && [requestParams objectForKey:kPontoMethodParamName]) {
-        Class targetClassName = [self classNameFromString:[requestParams objectForKey:kPontoTargetParamName]];
-        NSString *callbackId = [requestParams objectForKey:kPontoCallbackIdParamName];
+    if (requestParams && requestParams[kPontoTargetParamName] && requestParams[kPontoMethodParamName]) {
+        Class targetClassName = [self classNameFromString:requestParams[kPontoTargetParamName]];
+        NSString *callbackId = requestParams[kPontoCallbackIdParamName];
 
-        NSString *paramsString = [requestParams objectForKey:kPontoParamsParamName];
+        NSString *paramsString = requestParams[kPontoParamsParamName];
         id paramsObject = nil;
 
         if (paramsString && ![paramsString isEqual:[NSNull null]]) {
             paramsObject = [self paramsObjectFromString:[paramsString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         }
 
-        SEL methodSelector = [self methodSelectorFromString:[requestParams objectForKey:kPontoMethodParamName] withParams:(paramsObject!=nil)];
+        SEL methodSelector = [self methodSelectorFromString:requestParams[kPontoMethodParamName] withParams:(paramsObject != nil)];
 
         if (targetClassName && [targetClassName isSubclassOfClass:[PontoBaseHandler class]]) {
             id handlerObject;
@@ -290,33 +290,33 @@ typedef enum {
                 [self runJSCallback:callbackId withParams:response andType:RESPONSE_COMPLETE];
             }
             else {
-                NSDictionary *infoDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Handler object dont have method.", @"message", [requestParams objectForKey:kPontoMethodParamName], @"methodName", nil];
+                NSDictionary *infoDict = @{@"message" : @"Handler object dont have method.", @"methodName" : requestParams[kPontoMethodParamName]};
                 [self runJSCallback:callbackId withParams:infoDict andType:RESPONSE_ERROR];
             }
         }
         else {
-            NSLog(@"Class %@ is not valid Ponto Request Handler", [requestParams objectForKey:kPontoTargetParamName]);
+            NSLog(@"Class %@ is not valid Ponto Request Handler", requestParams[kPontoTargetParamName]);
 
-            NSDictionary *infoDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Class is not valid request handler.", @"message", [requestParams objectForKey:kPontoTargetParamName], @"className", nil];
+            NSDictionary *infoDict = @{@"message" : @"Class is not valid request handler.", @"className" : requestParams[kPontoTargetParamName]};
             [self runJSCallback:callbackId withParams:infoDict andType:RESPONSE_ERROR];
         }
     }
 }
 
 - (void)dispatchResponse:(NSDictionary *)responseParams {
-    if (responseParams && [responseParams objectForKey:kPontoCallbackIdParamName]) {
-        NSString *responseType = [responseParams objectForKey:@"type"];
-        NSString *callbackIdString = [responseParams objectForKey:kPontoCallbackIdParamName];
+    if (responseParams && responseParams[kPontoCallbackIdParamName]) {
+        NSString *responseType = responseParams[@"type"];
+        NSString *callbackIdString = responseParams[kPontoCallbackIdParamName];
         NSUInteger callbackId = (NSUInteger)[callbackIdString integerValue];
-        NSString *jsonString = [NSString stringWithFormat:@"[%@]", [responseParams objectForKey:@"params"]];
+        NSString *jsonString = [NSString stringWithFormat:@"[%@]", responseParams[@"params"]];
         NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableLeaves error:nil];
-        id responseObject = [responseArray objectAtIndex:0];
+        id responseObject = responseArray[0];
 
-        NSDictionary *responseCallbackDict = [self.callbacksQueue objectAtIndex:callbackId];
+        NSDictionary *responseCallbackDict = (self.callbacksQueue)[callbackId];
 
         if (responseCallbackDict != nil) {
-            PontoSuccessCallback successCallback = [responseCallbackDict objectForKey:kPontoSuccessCallbackBlockKey];
-            PontoErrorCallback errorCallback = [responseCallbackDict objectForKey:kPontoErrorCallbackBlockKey];
+            PontoSuccessCallback successCallback = responseCallbackDict[kPontoSuccessCallbackBlockKey];
+            PontoErrorCallback errorCallback = responseCallbackDict[kPontoErrorCallbackBlockKey];
 
             if (successCallback && (responseType == nil || [responseType isEqualToString:@"0"])) {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -337,12 +337,11 @@ typedef enum {
 
 - (void)runJSCallback:(NSString *)callbackId withParams:(id)params andType:(int)type {
     if (callbackId && ![callbackId isEqual:[NSNull null]]) {
-        NSDictionary *callbackDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                callbackId, @"callbackId",
-                [NSNumber numberWithInt:type], @"type",
-                params, @"params",
-                nil
-        ];
+        NSDictionary *callbackDict = @{
+                @"callbackId" : callbackId,
+                @"type" : @(type),
+                @"params" : params
+        };
 
         NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, [self serializeObjectToJSONString:callbackDict]];
 
