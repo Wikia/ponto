@@ -49,11 +49,14 @@ typedef enum {
 } PontoHandlerMethodReturnType;
 
 
-@interface PontoDispatcher()
-    @property (nonatomic, strong) NSMutableArray *callbacksQueue;
-    @property (nonatomic, assign) id originalWebViewDelegate;
+@interface PontoDispatcher() <UIWebViewDelegate, WKNavigationDelegate>
 
-    @property (nonatomic, assign, getter=isWebKitEnabled) BOOL webKitEnabled;
+@property (nonatomic, strong) NSMutableArray *callbacksQueue;
+@property (nonatomic, assign) id originalWebViewDelegate;
+
+@property (nonatomic, assign, getter=isWebKitEnabled) BOOL webKitEnabled;
+@property (nonatomic, assign) id <WKNavigationDelegate>originalWebKitViewNavigationDelegate;
+
 @end
 
 
@@ -123,7 +126,15 @@ typedef enum {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:methodInvokeDict options:NSJSONWritingPrettyPrinted error:nil];
     NSString *methodInvokeString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     NSString *jsString = [[NSString stringWithFormat:kPontoMethodInvokeJSString, methodInvokeString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+
+    if (self.isWebKitEnabled) {
+        [self.webKitView evaluateJavaScript:jsString completionHandler:^(id o, NSError *error) {
+            NSLog(@"JS Completion Handler with o: %@", o);
+        }];
+    }
+    else {
+        [self.webView stringByEvaluatingJavaScriptFromString:jsString];
+    }
 }
 
 
@@ -336,7 +347,15 @@ typedef enum {
         NSString *jSCallbackString = [NSString stringWithFormat:kPontoCallbackJSString, [self serializeObjectToJSONString:callbackDict]];
 
         NSLog(@"try to call callback: %@", jSCallbackString);
-        [self.webView stringByEvaluatingJavaScriptFromString:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+
+        if (self.isWebKitEnabled) {
+            [self.webKitView evaluateJavaScript:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] completionHandler:^(id o, NSError *error) {
+                NSLog(@"JS Completion handler with o: %@", o);
+            }];
+        }
+        else {
+            [self.webView stringByEvaluatingJavaScriptFromString:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        }
     }
 }
 
@@ -389,11 +408,50 @@ typedef enum {
 #pragma mark - iOS8 WKWebKitView stuff
 
 - (void)setWebKitView:(id)webKitView {
-    Class webKitViewClass = NSClassFromString(@"WKWebView");
-    if (webKitViewClass && [webKitView isKindOfClass:webKitViewClass]) {
-        _webKitView = webKitView;
-        self.webKitEnabled = YES;
+    _webKitView = webKitView;
+    self.originalWebKitViewNavigationDelegate = _webKitView.navigationDelegate;
+    _webKitView.navigationDelegate = self;
+    self.webKitEnabled = YES;
+}
+
+#pragma mark -
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+    NSURL *url = navigationAction.request.URL;
+    if ([[url scheme] isEqualToString:kPontoUrlScheme]) {
+        if ([[url path] isEqualToString:kPontoRequestUrlPath]) {
+            decisionHandler(WKNavigationActionPolicyCancel);
+
+            NSDictionary *requestParams = [self extractRequestParams:url];
+
+            if (requestParams) {
+                [self dispatchRequest:requestParams];
+            }
+        }
+        else if ([[url path] isEqualToString:kPontoResponseUrlPath]) {
+            decisionHandler(WKNavigationActionPolicyCancel);
+
+            NSDictionary *responseParams = [self extractResponseParams:url];
+
+            if (responseParams) {
+                [self dispatchResponse:responseParams];
+            }
+        }
     }
+
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
+    [self.originalWebKitViewNavigationDelegate webView:webView didCommitNavigation:navigation];
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+    [self.originalWebKitViewNavigationDelegate webView:webView didFinishNavigation:navigation];
+}
+
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    [self.originalWebKitViewNavigationDelegate webView:webView didFailNavigation:navigation withError:error];
 }
 
 @end
