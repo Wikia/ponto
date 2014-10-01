@@ -115,6 +115,10 @@ typedef enum {
         callbackId = [NSString stringWithFormat:@"%d", [self.callbacksQueue count] - 1];
     });
 
+    if (params == nil) {
+        params = @"";
+    }
+
     NSDictionary *methodInvokeDict = @{
             @"target" : target,
             @"method" : methodName,
@@ -127,9 +131,7 @@ typedef enum {
     NSString *jsString = [[NSString stringWithFormat:kPontoMethodInvokeJSString, methodInvokeString] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
     if (self.isWebKitEnabled) {
-        [self.webKitView evaluateJavaScript:jsString completionHandler:^(id o, NSError *error) {
-            NSLog(@"JS Completion Handler with o: %@", o);
-        }];
+        [self.webKitView evaluateJavaScript:jsString completionHandler:nil];
     }
     else {
         [self.webView stringByEvaluatingJavaScriptFromString:jsString];
@@ -222,7 +224,8 @@ typedef enum {
 - (NSDictionary *)extractResponseParams:(NSURL *)responseUrl {
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[self extractParamsFromUrl:responseUrl]];
 
-    return [params dictionaryWithValuesForKeys:@[kPontoCallbackIdParamName,
+    return [params dictionaryWithValuesForKeys:@[
+            kPontoCallbackIdParamName,
             kPontoParamsParamName
     ]];
 }
@@ -312,26 +315,28 @@ typedef enum {
         NSArray *responseArray = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableLeaves error:nil];
         id responseObject = responseArray[0];
 
-        NSDictionary *responseCallbackDict = (self.callbacksQueue)[callbackId];
+        if ([self.callbacksQueue count] > callbackId) {
+            NSDictionary *responseCallbackDict = (self.callbacksQueue)[callbackId];
 
-        if (responseCallbackDict != nil) {
-            PontoSuccessCallback successCallback = responseCallbackDict[kPontoSuccessCallbackBlockKey];
-            PontoErrorCallback errorCallback = responseCallbackDict[kPontoErrorCallbackBlockKey];
+            if (responseCallbackDict != nil) {
+                PontoSuccessCallback successCallback = responseCallbackDict[kPontoSuccessCallbackBlockKey];
+                PontoErrorCallback errorCallback = responseCallbackDict[kPontoErrorCallbackBlockKey];
 
-            if (successCallback && (responseType == nil || [responseType isEqualToString:@"0"])) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    successCallback(responseObject);
-                });
+                if (successCallback && (responseType == nil || [responseType isEqualToString:@"0"])) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        successCallback(responseObject);
+                    });
+                }
+
+                if (errorCallback && (responseType != nil && [responseType isEqualToString:@"1"])) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        errorCallback(responseObject);
+                    });
+                }
             }
 
-            if (errorCallback && (responseType != nil && [responseType isEqualToString:@"1"])) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    errorCallback(responseObject);
-                });
-            }
+            [self.callbacksQueue removeObjectAtIndex:callbackId];
         }
-
-        [self.callbacksQueue removeObjectAtIndex:callbackId];
     }
 }
 
@@ -348,9 +353,7 @@ typedef enum {
         NSLog(@"try to call callback: %@", jSCallbackString);
 
         if (self.isWebKitEnabled) {
-            [self.webKitView evaluateJavaScript:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] completionHandler:^(id o, NSError *error) {
-                NSLog(@"JS Completion handler with o: %@", o);
-            }];
+            [self.webKitView evaluateJavaScript:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] completionHandler:nil];
         }
         else {
             [self.webView stringByEvaluatingJavaScriptFromString:[jSCallbackString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
