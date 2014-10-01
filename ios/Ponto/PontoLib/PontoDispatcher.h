@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PontoBaseHandler.h"
+#import <WebKit/WebKit.h>
 
 @protocol PontoDispatcherDelegate <NSObject>
 @required
@@ -24,11 +25,12 @@
 
 @end
 
-@interface PontoDispatcher : NSObject <UIWebViewDelegate>
+@interface PontoDispatcher : NSObject
 
 @property (nonatomic, strong) NSString *handlerClassesPrefix;
 @property (nonatomic, weak) UIWebView *webView;
 @property (nonatomic, weak) id <PontoDispatcherDelegate>delegate;
+@property (nonatomic, weak) WKWebView *webKitView;
 
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix;
 - (id)initWithHandlerClassesPrefix:(NSString *)classesPrefix andWebView:(UIWebView *)webView;
