@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/Wikia/ponto"
   s.license          = "MIT"
   s.authors          = { "Grzegorz Nowicki" => "grzegorz@wikia-inc.com" }
-  s.platform         = :ios, '6.1'
+  s.platform         = :ios, '7.0'
   s.source_files     = 'ios/Ponto/PontoLib/*.{h,m}'
   s.source           = { :git => "https://github.com/Wikia/ponto.git", :tag => s.version.to_s }
   s.requires_arc = true
-  # s.dependency 'NSURL+QueryDictionary'
+  s.framework = WebKit
 
 end
