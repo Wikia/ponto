@@ -20,7 +20,9 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 /**
- * TODO description
+ * Ponto Android implementation.
+ * Two way communication between WebViews and Native Code in clean standardized manner.
+ * Provides callback mechanism to handle properly each request and response
  */
 public class Ponto {
 
