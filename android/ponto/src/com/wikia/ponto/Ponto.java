@@ -27,17 +27,17 @@ public class Ponto {
     public static final String TAG = "Ponto";
 
     /**
-     * TODO description
+     * Package that contains classes which can be invoked by WebView JavaScript
      */
     private String mClassPackage;
 
     /**
-     * TODO description
+     * WebView that will communicate with native code
      */
     private WebView mWebView;
 
     /**
-     * TODO description
+     * Callbacks to get WebView response for a request from the native code
      */
     private Map<String, RequestCallback> mCallbacks;
 
@@ -106,7 +106,7 @@ public class Ponto {
         /**
          * Called by the web layer to perform a request on native layer
          * 
-         * @param execContext The javascript context.
+         * @param execContext The JavaScript context.
          * @param className The class name to instantiate.
          * @param methodName The method name to invoke.
          * @param params The parameters that will be passed to invoked method.
@@ -155,7 +155,7 @@ public class Ponto {
         /**
          * Called by the web layer when answering a request from native layer
          * 
-         * @param execContext The javascript context.
+         * @param execContext The JavaScript context.
          * @param callbackId The id of callback that should be executed.
          * @param params The parameters associated with the response.
          */
@@ -234,7 +234,7 @@ public class Ponto {
 
     /**
      * Interface definition for a callbacks that are invoked 
-     * when webview responds for a request from the native code.
+     * when WebView responds for a request from the native code.
      */
     public interface RequestCallback {
 
