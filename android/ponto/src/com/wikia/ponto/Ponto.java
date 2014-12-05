@@ -45,7 +45,7 @@ public class Ponto {
 
     public Ponto(WebView webView, String classPackage) {
         mCallbacks = new HashMap<String, RequestCallback>();
-        mClassPackage = classPackage;
+        mClassPackage = classPackage + ".";
         mWebView = webView;
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new PontoProtocol(), PontoProtocol.TAG);

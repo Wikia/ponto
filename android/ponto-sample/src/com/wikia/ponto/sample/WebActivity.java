@@ -15,7 +15,7 @@ import android.widget.Toast;
 public class WebActivity extends Activity {
 
     private static final String HTML_FILE_PATH = "file:///android_asset/ponto_sample.html"; 
-    private static final String PONTO_MODULES_PACKAGE = "com.wikia.ponto.sample.modules.";
+    private static final String PONTO_MODULES_PACKAGE = "com.wikia.ponto.sample.modules";
 
     private static final String JS_ALERT_CLASS = "Alert";
     private static final String JS_ALERT_METHOD = "show";
