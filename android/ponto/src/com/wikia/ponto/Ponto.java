@@ -217,6 +217,7 @@ public class Ponto {
                     type = responseParams.optInt("type");
                 }
             } catch (JSONException e) {
+                type = RESPONSE_ERROR;
                 Log.e(TAG, "JSONException while parsing messaging data", e);
             }
             return type;
