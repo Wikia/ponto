@@ -50,12 +50,12 @@ public class Ponto {
     }
 
     /**
-     * TODO description
+     * Makes a request to the WebView JavaScript
      * 
-     * @param className 
-     * @param methodName 
-     * @param params 
-     * @param callbackId 
+     * @param className The class name to instantiate.
+     * @param methodName The method name to invoke.
+     * @param params The parameters that will be passed to invoked method.
+     * @param callback The callback for this request
      */
     public void invoke(String className, String methodName, String params, RequestCallback callback) {
         String callbackId = UUID.randomUUID().toString();
@@ -74,6 +74,9 @@ public class Ponto {
         mWebView.loadUrl(requestString.toString());
     }
 
+    /**
+     * Communication protocol that should be used as JavascriptInterface
+     */
     private class PontoProtocol {
 
         public static final String TAG = "PontoProtocol";
@@ -182,11 +185,11 @@ public class Ponto {
         }
 
         /**
-         * TODO description
+         * Makes a response to web layer
          * 
-         * @param callbackId
-         * @param type
-         * @param params
+         * @param callbackId The id of callback that should be executed.
+         * @param type The response type complete/error
+         * @param params The parameters associated with the response.
          */
         private void javascriptCallback(final String callbackId, final int type, final String params) {
             mWebView.post(new Runnable() {
@@ -216,7 +219,7 @@ public class Ponto {
             }
             return type;
         }
-        
+
         private JSONObject getClassNotFoundParams(String className) {
             Map<String, String> paramsMap = new HashMap<String, String>();
             paramsMap.put(KEY_MESSAGE, "Class not found");
