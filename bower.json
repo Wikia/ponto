@@ -1,0 +1,16 @@
+{
+  "name": "ponto",
+  "main": "web/src/ponto.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/Wikia/ponto.git",
+  "moduleType": [
+    "globals",
+    "amd"
+  ],
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+    "android",
+    "ios"
+  ]
+}
