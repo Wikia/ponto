@@ -11,6 +11,7 @@
   "private": false,
   "ignore": [
     "android",
-    "ios"
+    "ios",
+    "Ponto.podspec"
   ]
 }
