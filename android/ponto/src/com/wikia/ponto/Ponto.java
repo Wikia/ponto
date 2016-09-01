@@ -130,10 +130,12 @@ public class Ponto {
                 Object object = constructor.newInstance(mWebView.getContext());
                 if (params != null && !params.equalsIgnoreCase(NULL_STRING)) {
                     Method method = cls.getDeclaredMethod(methodName, String.class);
-                    method.invoke(object, params);
+                    Object retObject = method.invoke(object, params);
+                    if(retObject!=null)responseParams = (JSONObject)retObject;
                 } else {
                     Method method = cls.getDeclaredMethod(methodName);
-                    method.invoke(object);
+                    Object retObject = method.invoke(object);
+                    if(retObject!=null)responseParams = (JSONObject)retObject;
                 }
                 responseType = RESPONSE_COMPLETE;
             } catch (InstantiationException e) {

@@ -1,5 +1,8 @@
 package com.wikia.ponto.sample.modules;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,8 +58,11 @@ public class Messaging {
         mContext.startActivity(Intent.createChooser(emailIntent, subject));
     }
 
-    public void getSomeData() {
+    public JSONObject getSomeData() {
         Log.i("TAG", new Object() {}.getClass().getEnclosingMethod().getName());
+        Map<String, String> paramsMap = new HashMap<String, String>();
+        paramsMap.put("msg", "this is some data");
+        return new JSONObject(paramsMap);
     }
 
 }
