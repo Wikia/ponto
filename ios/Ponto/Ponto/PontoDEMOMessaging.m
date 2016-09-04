@@ -9,7 +9,6 @@
 #import "PontoDEMOMessaging.h"
 #import "PontoDEMOAppDelegate.h"
 
-
 @implementation PontoDEMOMessaging {
 
 }
@@ -45,6 +44,16 @@
             @"0.1", @"ponto_version",
             nil
     ];
+}
+
+- (void)webViewAlertCallback {
+    
+    // try to call JS method
+    [[PontoDEMOViewController getPontoDispatcher] invokeMethod:@"show" onTarget:@"Alert" withParams:[NSDictionary dictionaryWithObjectsAndKeys: @"this is callback text",@"text",nil] successBlock:^(id params) {
+        NSLog(@"success block with params: %@", params);
+    } errorBlock:^(id params) {
+        NSLog(@"error block with params: %@", params);
+    }];
 }
 
 @end

@@ -12,4 +12,6 @@
 @interface PontoDEMOViewController : UIViewController <PontoDispatcherCallbackDelegate>
 
 @property (strong, nonatomic) IBOutlet UIWebView *webView;
+
++ (PontoDispatcher *)getPontoDispatcher;
 @end

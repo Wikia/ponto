@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PontoBaseHandler.h"
+#import "PontoDEMOViewController.h"
 
 @interface PontoDEMOMessaging : PontoBaseHandler
 
