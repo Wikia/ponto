@@ -14,14 +14,19 @@
 
 @end
 
+static PontoDispatcher *_tempPontoDispatcher = nil;
+
 @implementation PontoDEMOViewController
+
+
++ (PontoDispatcher *)getPontoDispatcher
+{
+    return _tempPontoDispatcher;
+}
 
 - (void)viewDidLoad
 {
-
-
     [super viewDidLoad];
-
 
     // Create Ponto Dispatcher
     self.title = @"Ponto DEMO WebView";
@@ -34,12 +39,13 @@
         NSLog(@"error block with params: %@", params);
     }];
 
-
     // Load local HTML file
     NSString *pathToLocalFile = [[NSBundle mainBundle] pathForResource:@"pontoDemo" ofType:@"html"];
     NSURL *localFileURL = [[NSURL alloc] initFileURLWithPath:pathToLocalFile];
     NSURLRequest *localFileRequest = [[NSURLRequest alloc] initWithURL:localFileURL];
     [self.webView loadRequest:localFileRequest];
+    
+    _tempPontoDispatcher = self.pontoDispatcher;
 }
 
 

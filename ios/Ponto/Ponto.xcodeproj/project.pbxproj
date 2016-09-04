@@ -258,7 +258,7 @@
 			name = PontoTests;
 			productName = PontoTests;
 			productReference = 6BE468BAA200487C0A00CFAF /* PontoTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -266,6 +266,7 @@
 		6BE46A497320EB524FF754F6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastTestingUpgradeCheck = 0700;
 			};
 			buildConfigurationList = 6BE46E9490E9050BBD4C5957 /* Build configuration list for PBXProject "Ponto" */;
 			compatibilityVersion = "Xcode 3.2";
